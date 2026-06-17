@@ -1,0 +1,20 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: alpha-shop-web
+  description: alpha's shop web service
+  tags:
+    - go
+  annotations:
+    github.com/project-slug: asanexample/alpha-shop
+    # The per-Product ArgoCD Application for the dev stage (the per-Product ApplicationSet names it
+    # <team>-<product>-<stage>).
+    argocd/app-name: alpha-shop-dev
+    backstage.io/kubernetes-label-selector: app.kubernetes.io/name=app-alpha-shop
+    backstage.io/kubernetes-namespace: alpha-shop-dev
+spec:
+  type: service
+  # Component (the Service code) of the Product System (ADR-067: Product=System, Service=Component).
+  lifecycle: experimental
+  owner: alpha
+  system: alpha-shop
