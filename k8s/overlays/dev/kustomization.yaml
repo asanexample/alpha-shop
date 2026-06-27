@@ -11,3 +11,14 @@ replicas:
 images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-web
     newTag: placeholder # the ApplicationSet injects the real digest from the Release record (ADR-071)
+
+# TEMP — ADR-084 Phase 1 demo: force a crash-on-start so the triage agent attributes the incident to this
+# commit's author. REVERTED immediately after the demo (do not keep).
+patches:
+  - target:
+      kind: Rollout
+      name: app-alpha-shop
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/command
+        value: ["/bin/sh", "-c", "echo 'FATAL: missing DATABASE_URL after config change'; sleep 5; exit 1"]
