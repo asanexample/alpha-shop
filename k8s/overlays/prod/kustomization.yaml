@@ -25,6 +25,18 @@ patches:
           limits:
             cpu: 500m
             memory: 256Mi
+  # DEMO: env var to force a new revision -> a deploy that hits the freeze.
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: app-alpha-shop
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: DEMO_FREEZE
+          value: "1"
   - target:
       group: argoproj.io
       version: v1alpha1
@@ -53,6 +65,15 @@ patches:
                     fieldRef:
                       fieldPath: metadata.namespace
             steps:
+              # W11 error-budget freeze — pre-flight, before any traffic shifts.
+              - analysis:
+                  templates:
+                    - templateName: app-alpha-shop-budget-freeze
+                  args:
+                    - name: namespace
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.namespace
               - setWeight: 25
               - pause: { duration: 60 }
               - setWeight: 50
