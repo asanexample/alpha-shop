@@ -1,0 +1,15 @@
+# Prod canary extra (ADR-056): the canary Service targets the new-revision pods (Argo Rollouts injects the
+# rollouts-pod-template-hash). The base Service is the stable service; the HTTPRoute is patched to a weighted
+# stable+canary pair (kustomization.yaml) and the Gateway-API plugin shifts the weights per step.
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-alpha-shop-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: app-alpha-shop
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP

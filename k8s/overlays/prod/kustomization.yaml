@@ -1,14 +1,14 @@
-# prod. Three replicas + a resource bump (real deltas); digest pinned by CI per promote-by-PR (#377).
+# prod. Three replicas + a resource bump; digest pinned by CI per promote-by-PR (#377). prod runs a canary
+# (ADR-056): the base Rollout's trivial strategy is replaced with a stepped, weighted canary via the
+# Gateway-API plugin. The Application ignoreDifferences (argocd-apps) lets the plugin own the weights.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - progressive.yaml
 replicas:
   - name: app-alpha-shop
     count: 3
-# A JSON6902 patch (not strategic-merge): kustomize has no merge-key schema for the Rollout CR, so a
-# strategic-merge container patch REPLACES the container (dropping the image). A targeted replace of the
-# resources subtree avoids that (ADR-056).
 patches:
   - target:
       group: argoproj.io
@@ -25,6 +25,45 @@ patches:
           limits:
             cpu: 500m
             memory: 256Mi
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: app-alpha-shop
+    patch: |-
+      - op: replace
+        path: /spec/strategy
+        value:
+          canary:
+            stableService: app-alpha-shop
+            canaryService: app-alpha-shop-canary
+            trafficRouting:
+              plugins:
+                argoproj-labs/gatewayAPI:
+                  httpRoute: app-alpha-shop
+            maxSurge: 1
+            maxUnavailable: 0
+            steps:
+              - setWeight: 25
+              - pause: { duration: 60 }
+              - setWeight: 50
+              - pause: { duration: 60 }
+              - setWeight: 100
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: app-alpha-shop
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/backendRefs
+        value:
+          - name: app-alpha-shop
+            port: 80
+            weight: 100
+          - name: app-alpha-shop-canary
+            port: 80
+            weight: 0
 images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-web
     newTag: placeholder # CI replaces with the signed digest at deploy (promote-by-PR, #377)
