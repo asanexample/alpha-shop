@@ -25,6 +25,18 @@ patches:
           limits:
             cpu: 500m
             memory: 256Mi
+  # DEMO: a benign env var to force a new Rollout revision (=> a canary fires; we watch the gate fail).
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: app-alpha-shop
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: DEMO_ROLLBACK
+          value: forced-fail
   - target:
       group: argoproj.io
       version: v1alpha1
