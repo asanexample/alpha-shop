@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: app-alpha-shop
   labels:
@@ -11,6 +11,15 @@ spec:
   selector:
     matchLabels:
       app: app-alpha-shop
+  strategy:
+    canary:
+      # Auto-promote in one step (ADR-056) — exercises the Rollout/admission/PDB path with no canary cost.
+      # maxSurge 1 + maxUnavailable 0 brings the new pod up before the old terminates, so even a 1-replica
+      # stage is zero-downtime (paired with the mutate-injected preStop drain). Prod gets stepped/gated later.
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
   template:
     metadata:
       labels:
