@@ -35,3 +35,24 @@ spec:
             sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",http_response_status_code!~"5.."}[2m]))
             / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}"}[2m]))
       successCondition: "len(result) == 0 || result[0] >= 0.95"
+---
+# W11 error-budget freeze (ADR-056) — a one-shot PRE-FLIGHT gate BEFORE any traffic shifts: if the service is
+# already burning its SLO budget too fast (>= 2x), this fails and the rollout aborts (frozen on stable) rather
+# than deploying into an already-unreliable service. Distinct from the canary-gate above (which watches the NEW
+# version mid-rollout). No SLO data yet → passes, so a deploy is never blocked spuriously.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: app-alpha-shop-budget-freeze
+spec:
+  args:
+    - name: namespace
+  metrics:
+    - name: error-budget-burn
+      count: 1
+      provider:
+        prometheus:
+          address: https://preprod-mimir.aws.refplat.org/prometheus
+          query: |
+            slo:current_burn_rate:ratio{sloth_id="{{args.namespace}}-availability"}
+      successCondition: "len(result) == 0 || result[0] < 2"
