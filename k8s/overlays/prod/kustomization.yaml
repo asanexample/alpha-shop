@@ -53,6 +53,15 @@ patches:
                     fieldRef:
                       fieldPath: metadata.namespace
             steps:
+              # W11 error-budget freeze — pre-flight, before any traffic shifts.
+              - analysis:
+                  templates:
+                    - templateName: app-alpha-shop-budget-freeze
+                  args:
+                    - name: namespace
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.namespace
               - setWeight: 25
               - pause: { duration: 60 }
               - setWeight: 50
