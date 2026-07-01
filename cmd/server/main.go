@@ -33,6 +33,7 @@ func newMux(version, namespace string) *http.ServeMux {
 			"namespace": namespace,
 			"hostname":  r.Host,
 			"timestamp": time.Now().UTC().Format(time.RFC3339),
+			"marker":    "pr-preview-e2e-test",
 		})
 	})
 
