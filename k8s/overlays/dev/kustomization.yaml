@@ -5,6 +5,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - netpol-egress-checkout.yaml # egress allow to alpha-checkout-dev (default-deny egress is additive) — the other half of the shop->checkout path
 replicas:
   - name: app-alpha-shop
     count: 1
