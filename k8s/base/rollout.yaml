@@ -53,6 +53,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            # In-cluster Service DNS of alpha-checkout (dev stage). shop's GET / calls this and embeds
+            # the response — the east-west demo (platform#1204). Override per-stage in overlays as needed.
+            - name: CHECKOUT_URL
+              value: http://app-alpha-checkout.alpha-checkout-dev.svc.cluster.local/checkout
           securityContext:
             allowPrivilegeEscalation: false
             # Immutable container filesystem — writes go to the emptyDir /tmp below. Regulated-tier ready.
