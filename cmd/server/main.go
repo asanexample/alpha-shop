@@ -14,6 +14,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,17 +23,25 @@ import (
 	"time"
 )
 
+// httpClient makes the outbound call to alpha-checkout. A short timeout keeps a slow/hung downstream
+// from tying up shop's request goroutines — never use the default (no-timeout) client for this.
+var httpClient = &http.Client{Timeout: 3 * time.Second}
+
 // newMux wires the routes — extracted so the unit test can exercise them without binding a port.
-func newMux(version, namespace string) *http.ServeMux {
+func newMux(version, namespace, checkoutURL string) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, http.StatusOK, map[string]string{
+		// Demonstrate a real east-west call: fetch a checkout confirmation and embed it, so a curl of
+		// shop's public URL visibly shows checkout answered. Degrade gracefully — shop stays 200 with a
+		// checkout.error field if the downstream is down, so shop's own readiness is unaffected.
+		writeJSON(w, http.StatusOK, map[string]any{
 			"app":       "app-alpha-shop",
 			"version":   version,
 			"namespace": namespace,
 			"hostname":  r.Host,
 			"timestamp": time.Now().UTC().Format(time.RFC3339),
+			"checkout":  callCheckout(r.Context(), checkoutURL),
 		})
 	})
 
@@ -46,10 +55,12 @@ func newMux(version, namespace string) *http.ServeMux {
 func main() {
 	version := getenv("VERSION", "dev")
 	namespace := getenv("NAMESPACE", "unknown")
+	// In-cluster Service DNS of alpha-checkout (this env's dev stage). Overridable per-stage.
+	checkoutURL := getenv("CHECKOUT_URL", "http://app-alpha-checkout.alpha-checkout-dev.svc.cluster.local/checkout")
 
 	srv := &http.Server{
 		Addr:         ":8080",
-		Handler:      newMux(version, namespace),
+		Handler:      newMux(version, namespace, checkoutURL),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
@@ -87,4 +98,27 @@ func writeJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
+}
+
+// callCheckout fetches an order confirmation from alpha-checkout. It never fails the caller: any error
+// is returned as {"error": ...} so shop's own response stays 200 (the downstream being down must not
+// flip shop's readiness). Returns the decoded checkout JSON on success.
+func callCheckout(ctx context.Context, url string) any {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return map[string]string{"error": err.Error()}
+	}
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return map[string]string{"error": err.Error()}
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return map[string]string{"error": fmt.Sprintf("checkout returned %d", resp.StatusCode)}
+	}
+	var body map[string]string
+	if err := json.NewDecoder(resp.Body).Decode(&body); err != nil {
+		return map[string]string{"error": "decode checkout response: " + err.Error()}
+	}
+	return body
 }
