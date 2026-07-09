@@ -6,6 +6,7 @@ kind: Kustomization
 resources:
   - ../../base
   - netpol-egress-checkout.yaml # egress allow to alpha-checkout-dev (default-deny egress is additive) — the other half of the shop->checkout path
+  - netpol-egress-otel.yaml # egress allow to observability/otel-collector:4318 for OTLP trace export (P14 log→trace)
 replicas:
   - name: app-alpha-shop
     count: 1

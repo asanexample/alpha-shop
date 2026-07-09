@@ -57,6 +57,15 @@ spec:
             # the response — the east-west demo (platform#1204). Override per-stage in overlays as needed.
             - name: CHECKOUT_URL
               value: http://app-alpha-checkout.alpha-checkout-dev.svc.cluster.local/checkout
+            # OpenTelemetry (ADR-077 Layer 1 / P14): export request traces to the platform OTLP collector
+            # so the app-emitted trace_id in each log line links to a real trace in Tempo (log → trace).
+            # Egress to the collector is opened by the allow-egress-to-otel-collector netpol in this overlay.
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://otel-collector.observability.svc.cluster.local:4318
+            - name: OTEL_SERVICE_NAME
+              value: app-alpha-shop
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
           securityContext:
             allowPrivilegeEscalation: false
             # Immutable container filesystem — writes go to the emptyDir /tmp below. Regulated-tier ready.
