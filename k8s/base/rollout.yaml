@@ -66,6 +66,12 @@ spec:
               value: app-alpha-shop
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.namespace=alpha-shop
+            # Pyroscope (ADR-077 / P8b): the Go SDK PUSHES continuous profiles to the platform Pyroscope via
+            # the shared Gateway edge (cross-cluster; the Gateway force-stamps the tenant). Pairs each span with
+            # its flame graph (trace→profiles) + captures the full Go profile suite. Egress opened by the
+            # allow-egress-to-pyroscope Cilium netpol in this overlay. Unset → the SDK no-ops (local runs).
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
           securityContext:
             allowPrivilegeEscalation: false
             # Immutable container filesystem — writes go to the emptyDir /tmp below. Regulated-tier ready.
