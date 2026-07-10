@@ -1,0 +1,34 @@
+# Allow egress from this shop service to the platform Pyroscope ingest edge so the Pyroscope Go SDK can PUSH
+# continuous profiles (the app-side half of trace→profiles / #1269). Unlike the OTLP collector (in-cluster),
+# Pyroscope lives on the hub and is reached cross-cluster via the shared Gateway at an EXTERNAL hostname —
+# so this is a CiliumNetworkPolicy with toFQDNs (a plain NetworkPolicy can't match a DNS name), which needs
+# DNS visibility so Cilium's FQDN proxy can learn the name→IP mapping. Environment namespaces default-deny
+# egress; Cilium policies are additive. Least-privilege: only :443 to the one profiles hostname.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-egress-to-pyroscope
+spec:
+  endpointSelector: {}
+  egress:
+    # DNS to CoreDNS, with the dns rule so Cilium's proxy observes the answer and populates the toFQDNs IP set.
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # HTTPS to the Pyroscope spoke-ingest hostname (the Gateway force-stamps X-Scope-OrgID: preprod).
+    - toFQDNs:
+        - matchName: "preprod-profiles.aws.refplat.org"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

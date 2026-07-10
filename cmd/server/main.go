@@ -22,9 +22,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
 	"time"
 
+	otelpyroscope "github.com/grafana/otel-profiling-go"
+	"github.com/grafana/pyroscope-go"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -104,6 +107,13 @@ func main() {
 		defer func() { _ = shutdown(context.Background()) }()
 	}
 
+	// Continuous profiling (Pyroscope) — span-linked flame graphs + the full Go profile suite. Never fatal.
+	if profiler, err := initProfiler(); err != nil {
+		logger.Error("pyroscope init failed; continuing without profiling", "err", err)
+	} else if profiler != nil {
+		defer func() { _ = profiler.Stop() }()
+	}
+
 	// otelhttp opens a server span per request (and puts the trace in the request context the handlers
 	// log with). "http.server" is the span-name formatter root.
 	handler := otelhttp.NewHandler(newMux(version, namespace, checkoutURL), "http.server")
@@ -156,9 +166,41 @@ func initTracer(ctx context.Context) (func(context.Context) error, error) {
 		sdktrace.WithBatcher(exp),
 		sdktrace.WithResource(res),
 	)
-	otel.SetTracerProvider(tp)
+	// Wrap with the Pyroscope tracer provider so every span carries a `pyroscope.profile.id` attribute —
+	// the key Grafana keys the trace→profiles ("Profiles for this span") link on. No-op for profiling if
+	// the Pyroscope SDK isn't started (initProfiler), but harmless.
+	otel.SetTracerProvider(otelpyroscope.NewTracerProvider(tp))
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp.Shutdown, nil
+}
+
+// initProfiler starts continuous profiling with the Pyroscope SDK, pushing to the platform Pyroscope
+// (PYROSCOPE_SERVER_ADDRESS, injected by the manifest; the Gateway edge force-stamps the tenant). Captures
+// the full Go profile suite — CPU, heap (alloc/inuse), goroutines, mutex, block — so Pyroscope has more than
+// the eBPF profiler's CPU-only floor, and (paired with the otelpyroscope tracer above) links each span to
+// its profile. Degrades cleanly to a no-op when PYROSCOPE_SERVER_ADDRESS is unset (local/test runs).
+func initProfiler() (*pyroscope.Profiler, error) {
+	addr := os.Getenv("PYROSCOPE_SERVER_ADDRESS")
+	if addr == "" {
+		return nil, nil
+	}
+	// Mutex/block profiles are off by default in the Go runtime — enable a light sampling rate so those
+	// profile types actually have data (1/5 mutex contention events; block events every 5ns).
+	runtime.SetMutexProfileFraction(5)
+	runtime.SetBlockProfileRate(5)
+	return pyroscope.Start(pyroscope.Config{
+		ApplicationName: getenv("OTEL_SERVICE_NAME", "app-alpha-shop"),
+		ServerAddress:   addr,
+		Tags:            map[string]string{"namespace": getenv("NAMESPACE", "unknown")},
+		ProfileTypes: []pyroscope.ProfileType{
+			pyroscope.ProfileCPU,
+			pyroscope.ProfileAllocObjects, pyroscope.ProfileAllocSpace,
+			pyroscope.ProfileInuseObjects, pyroscope.ProfileInuseSpace,
+			pyroscope.ProfileGoroutines,
+			pyroscope.ProfileMutexCount, pyroscope.ProfileMutexDuration,
+			pyroscope.ProfileBlockCount, pyroscope.ProfileBlockDuration,
+		},
+	})
 }
 
 func getenv(key, def string) string {
