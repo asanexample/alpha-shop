@@ -22,6 +22,11 @@ spec:
         - setWeight: 100
   template:
     metadata:
+      annotations:
+        # P14 (ADR-077 D2): opt into the platform OTel Operator's SDK-config injection. The operator sets
+        # OTEL_EXPORTER_OTLP_ENDPOINT (+ propagators/sampler) into this pod from the namespace's `platform`
+        # Instrumentation CR — so the collector endpoint is platform-managed, never hardcoded in this manifest.
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
       labels:
         app: app-alpha-shop
         app.kubernetes.io/name: app-alpha-shop
@@ -57,11 +62,11 @@ spec:
             # the response — the east-west demo (platform#1204). Override per-stage in overlays as needed.
             - name: CHECKOUT_URL
               value: http://app-alpha-checkout.alpha-checkout-dev.svc.cluster.local/checkout
-            # OpenTelemetry (ADR-077 Layer 1 / P14): export request traces to the platform OTLP collector
-            # so the app-emitted trace_id in each log line links to a real trace in Tempo (log → trace).
+            # OpenTelemetry (ADR-077 Layer 1 / P14): the OTel SDK exports request traces to the platform OTLP
+            # collector so the app-emitted trace_id in each log line links to a real trace in Tempo (log → trace).
+            # OTEL_EXPORTER_OTLP_ENDPOINT is now injected by the platform OTel Operator (via the inject-sdk
+            # annotation above) from the namespace's `platform` Instrumentation CR — no longer hardcoded here.
             # Egress to the collector is opened by the allow-egress-to-otel-collector netpol in this overlay.
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://otel-collector.observability.svc.cluster.local:4318
             - name: OTEL_SERVICE_NAME
               value: app-alpha-shop
             - name: OTEL_RESOURCE_ATTRIBUTES
