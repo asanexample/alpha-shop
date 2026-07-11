@@ -1,26 +1,27 @@
-# Prod canary extra (ADR-056): the canary Service targets the new-revision pods (Argo Rollouts injects the
-# rollouts-pod-template-hash). The base Service is the stable service; the HTTPRoute is patched to a weighted
-# stable+canary pair (kustomization.yaml) and the Gateway-API plugin shifts the weights per step.
+# Prod canary extra (ADR-056) for the STOREFRONT (the edge service that takes user traffic). The canary
+# Service targets the new-revision pods (Argo Rollouts injects the rollouts-pod-template-hash). The base
+# storefront Service is the stable service; the storefront HTTPRoute is patched to a weighted stable+canary
+# pair (kustomization.yaml) and the Gateway-API plugin shifts the weights per step.
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-alpha-shop-canary
+  name: storefront-canary
 spec:
   type: ClusterIP
   selector:
-    app: app-alpha-shop
+    app: storefront
   ports:
     - port: 80
       targetPort: 8080
       protocol: TCP
 ---
 # Metric gate (ADR-056 W8c): the canary's background analysis queries the hub Mimir (via the preprod spoke read
-# route) for the app's HTTP success rate and auto-rolls-back if it misses. Prometheus provider (not job — Kyverno
-# would deny a non-team-ECR job image). The hub force-sets the X-Scope-OrgID tenant, so no header is needed.
+# route) for the storefront's HTTP success rate and auto-rolls-back if it misses. Prometheus provider (not job —
+# Kyverno would deny a non-team-ECR job image). The hub force-sets the X-Scope-OrgID tenant, so no header needed.
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: app-alpha-shop-canary-gate
+  name: storefront-canary-gate
 spec:
   args:
     - name: namespace
@@ -36,14 +37,14 @@ spec:
             / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}"}[2m]))
       successCondition: "len(result) == 0 || result[0] >= 0.95"
 ---
-# W11 error-budget freeze (ADR-056) — a one-shot PRE-FLIGHT gate BEFORE any traffic shifts: if the service is
+# W11 error-budget freeze (ADR-056) — a one-shot PRE-FLIGHT gate BEFORE any traffic shifts: if the storefront is
 # already burning its SLO budget too fast (>= 2x), this fails and the rollout aborts (frozen on stable) rather
 # than deploying into an already-unreliable service. Distinct from the canary-gate above (which watches the NEW
 # version mid-rollout). No SLO data yet → passes, so a deploy is never blocked spuriously.
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: app-alpha-shop-budget-freeze
+  name: storefront-budget-freeze
 spec:
   args:
     - name: namespace

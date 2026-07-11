@@ -1,22 +1,16 @@
 name: Deploy
 
 # Thin caller (ADR-067 / ADR-071). The supply-chain backbone lives in the app-team-unwritable
-# asanexample/trusted-ci repo:
-#   build      -> build-sign.yml       builds from the Dockerfile, pushes to team-alpha/shop-web,
-#                                       cosign-signs the image + attaches a CycloneDX SBOM (trusted-ci's identity).
-#   provenance -> slsa-provenance.yml   attaches the SLSA build provenance (SLSA L3, isolated signer).
-#   promote    -> promote.yml           records the deployed digest in the PLATFORM control-plane repo (a gated PR
-#                                        bumping gitops/releases/alpha/shop/dev.yaml).
-#                                        The per-Product ApplicationSet injects it. THIS repo's main is NEVER
-#                                        written by CI — no contents:write — so it stays fully protected (ADR-071).
+# asanexample/trusted-ci repo. One build→provenance→promote chain PER SERVICE (the bike shop is one Product
+# with many services): each builds its own image (team-alpha/shop-<service>) from its own Dockerfile, signs +
+# SBOMs + provenances it, then records the digest in the platform control-plane Release
+# (gitops/releases/alpha/shop/dev.yaml, keyed by service). THIS repo's main is NEVER written by CI (no
+# contents:write). Both services rebuild on any code/Dockerfile/dep change (a shared internal/ change can
+# affect both); manifest/docs-only pushes skip via paths-ignore.
 
 on:
   push:
     branches: [main]
-    # platform#739: manifest/docs-only changes deliver via ArgoCD (the workload ApplicationSet sources
-    # k8s/ at targetRevision: HEAD), so skip the full build+sign+promote when nothing that affects the image
-    # changed. paths-ignore errs toward building: a push is skipped ONLY if EVERY changed file matches below, so
-    # any code/Dockerfile/dependency change still rebuilds.
     paths-ignore:
       - 'k8s/**'
       - 'docs/**'
@@ -27,38 +21,60 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    permissions:
-      id-token: write # OIDC: AWS (ECR push) + cosign keyless signing
-      contents: read
+  # ---------------- storefront (edge: SPA + BFF) ----------------
+  build-storefront:
+    permissions: { id-token: write, contents: read }
     uses: asanexample/trusted-ci/.github/workflows/build-sign.yml@7a739dcd25cff26ac7c33f2301166a1c34301b6c
     with:
-      app: shop-web # product-scoped image: team-alpha/shop-web
-      product: shop # selects the per-Product OIDC role github-actions-ecr-push-product-alpha-shop (ADR-069)
+      app: shop-storefront
+      product: shop
       tag: ${{ github.sha }}
+      dockerfile: services/storefront/Dockerfile
 
-  provenance:
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
+  provenance-storefront:
+    needs: build-storefront
+    permissions: { id-token: write, contents: read }
     uses: asanexample/trusted-ci/.github/workflows/slsa-provenance.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
     with:
-      image: ${{ needs.build.outputs.image }}
-      digest: ${{ needs.build.outputs.digest }}
-      product: shop # selects the per-Product OIDC role github-actions-ecr-push-product-alpha-shop (ADR-069)
+      image: ${{ needs.build-storefront.outputs.image }}
+      digest: ${{ needs.build-storefront.outputs.digest }}
+      product: shop
 
-  # Gated on BOTH build and provenance so the promoted digest already carries its signature, SBOM AND provenance
-  # — no window where Kyverno's Enforce verify-*-product would reject it. promote opens a gated PR in the platform
-  # repo (as the asanexample-promote App); the gitops Gate auto-merges it; the ApplicationSet injects the digest.
-  promote:
-    needs: [build, provenance]
-    permissions:
-      id-token: write # OIDC -> per-Product role -> read the promote App key (NO contents write on this repo)
-      contents: read
+  promote-storefront:
+    needs: [build-storefront, provenance-storefront]
+    permissions: { id-token: write, contents: read }
     uses: asanexample/trusted-ci/.github/workflows/promote.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
     with:
       product: shop
-      service: web
+      service: storefront
       stage: dev
-      digest: ${{ needs.build.outputs.digest }}
+      digest: ${{ needs.build-storefront.outputs.digest }}
+
+  # ---------------- catalog (internal) ----------------
+  build-catalog:
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/build-sign.yml@7a739dcd25cff26ac7c33f2301166a1c34301b6c
+    with:
+      app: shop-catalog
+      product: shop
+      tag: ${{ github.sha }}
+      dockerfile: services/catalog/Dockerfile
+
+  provenance-catalog:
+    needs: build-catalog
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/slsa-provenance.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
+    with:
+      image: ${{ needs.build-catalog.outputs.image }}
+      digest: ${{ needs.build-catalog.outputs.digest }}
+      product: shop
+
+  promote-catalog:
+    needs: [build-catalog, provenance-catalog]
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/promote.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
+    with:
+      product: shop
+      service: catalog
+      stage: dev
+      digest: ${{ needs.build-catalog.outputs.digest }}

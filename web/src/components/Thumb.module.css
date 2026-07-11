@@ -1,0 +1,48 @@
+.thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Icon line stroke + accents inside the blueprint */
+.icon {
+  color: var(--icon-ink);
+}
+.icon :global(.dot) {
+  fill: var(--icon-ink);
+  stroke: none;
+}
+.icon :global(.accent-fill) {
+  fill: var(--accent);
+  stroke: var(--icon-ink);
+  stroke-width: 2.4;
+}
+.icon :global(.bolt) {
+  stroke: var(--accent-ink);
+  fill: none;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  fill: var(--icon-ink);
+  opacity: 0.62;
+}
+
+.scaleText {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  fill: var(--icon-ink);
+  opacity: 0.5;
+}

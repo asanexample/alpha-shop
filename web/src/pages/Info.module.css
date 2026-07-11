@@ -1,0 +1,41 @@
+.wrap {
+  max-width: 780px;
+  margin-inline: auto;
+  padding: clamp(2rem, 6vw, 4rem) var(--gutter) 0;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  font-size: var(--step-5);
+  margin: 0.5rem 0 1.25rem;
+}
+.lead {
+  font-size: var(--step-2);
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 1.75rem;
+  max-width: 40ch;
+}
+.section {
+  padding: 1.4rem 0;
+  border-top: var(--border);
+}
+.section h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+.section p {
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 62ch;
+}
+.cta {
+  margin: 2rem 0 0;
+}

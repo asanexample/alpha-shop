@@ -1,0 +1,102 @@
+# catalog — internal product-catalog service. ClusterIP only, NO HTTPRoute: it is reachable only east-west
+# from the storefront BFF (enforced by the ingress CNP + SPIRE mutual auth). Serves the read API the browse
+# pages render from.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: catalog
+  labels:
+    app: catalog
+    app.kubernetes.io/name: shop-catalog
+    team: alpha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: catalog
+  strategy:
+    canary:
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
+      labels:
+        app: catalog
+        app.kubernetes.io/name: shop-catalog
+        team: alpha
+    spec:
+      serviceAccountName: app-alpha
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: catalog
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: catalog
+      containers:
+        - name: catalog
+          image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-catalog:placeholder
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OTEL_SERVICE_NAME
+              value: shop-catalog
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

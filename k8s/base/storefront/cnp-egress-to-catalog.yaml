@@ -1,0 +1,33 @@
+# East-west egress: storefront → catalog (same namespace, port 8080). Environment namespaces default-deny
+# egress, so the caller half is required even in-namespace (Cilium is identity-matched). DNS to CoreDNS is
+# allowed so the BFF can resolve the `catalog` Service name. The callee half + SPIRE mutual-auth lives in
+# catalog/cnp-ingress-from-storefront.yaml.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-storefront-egress-to-catalog
+spec:
+  endpointSelector:
+    matchLabels:
+      app: storefront
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            app: catalog
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
