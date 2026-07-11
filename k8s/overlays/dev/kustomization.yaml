@@ -1,16 +1,18 @@
-# dev (the default stage). Single replica. The image is NOT pinned here (ADR-071): the per-Product
-# ApplicationSet injects the deployed digest from the control-plane Release record
-# (gitops/releases/<team>/<product>/dev.yaml). CI never writes this repo's main; `placeholder` stays.
+# dev (the default stage). Single replica per service to save cost. Images are NOT pinned here (ADR-071): the
+# per-Product ApplicationSet injects each service's deployed digest from the control-plane Release record
+# (gitops/releases/alpha/shop/dev.yaml). CI never writes this repo's main; `placeholder` stays.
+# The shared otel/pyroscope egress netpols now live in base (stage-agnostic).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
-  - netpol-egress-checkout.yaml # egress allow to alpha-checkout-dev (default-deny egress is additive) — the other half of the shop->checkout path
-  - netpol-egress-otel.yaml # egress allow to observability/otel-collector:4318 for OTLP trace export (P14 log→trace)
-  - netpol-egress-pyroscope.yaml # egress allow (Cilium FQDN) to the Pyroscope ingest edge for SDK profile push (trace→profiles)
 replicas:
-  - name: app-alpha-shop
+  - name: storefront
+    count: 1
+  - name: catalog
     count: 1
 images:
-  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-web
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-storefront
     newTag: placeholder # the ApplicationSet injects the real digest from the Release record (ADR-071)
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-catalog
+    newTag: placeholder

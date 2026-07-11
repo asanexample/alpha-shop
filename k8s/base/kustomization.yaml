@@ -1,15 +1,28 @@
-# Namespace- and host-agnostic base (ADR-067 platform-injection). The per-Product ApplicationSet sets the
-# destination namespace (<team>-<product>[-<customer>]-<stage>, Composition-created) and patches the real
-# host onto the HTTPRoute — so NO `namespace:` here and the route host is a fail-safe placeholder. Per-stage
-# overlays carry the image digest + any real stage deltas.
+# Namespace- and host-agnostic base for the bike shop (ADR-067 platform-injection). The per-Product
+# ApplicationSet sets the destination namespace (alpha-shop[-<customer>]-<stage>, Composition-created) and
+# patches the real host onto the storefront HTTPRoute — so NO `namespace:` here and the route host is a
+# fail-safe placeholder. Per-stage overlays carry each service's image digest + any real stage deltas.
+#
+# One Product, MANY services (ADR-067): storefront (edge: SPA + BFF) and catalog (internal, east-west only).
+# The Release records one digest per service; the ApplicationSet injects one image override per service.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - serviceaccount.yaml
-  - rollout.yaml
-  - service.yaml
-  - httproute.yaml
-# Rewrite HTTPRoute backendRefs when a namePrefix is applied (PR previews). See name-reference.yaml.
+  # storefront — the edge service (SPA + BFF)
+  - storefront/rollout.yaml
+  - storefront/service.yaml
+  - storefront/httproute.yaml
+  - storefront/cnp-egress-to-catalog.yaml
+  # catalog — internal, east-west only
+  - catalog/rollout.yaml
+  - catalog/service.yaml
+  - catalog/cnp-ingress-from-storefront.yaml
+  # shared observability egress (both services)
+  - netpol-egress-otel.yaml
+  - netpol-egress-pyroscope.yaml
+# Teach kustomize's replicas/commonLabels transformers about Argo Rollouts, and rewrite HTTPRoute backendRefs
+# under a namePrefix (PR previews). See the two config files.
 configurations:
   - name-reference.yaml
   - kustomizeconfig.yaml

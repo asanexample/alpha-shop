@@ -1,0 +1,111 @@
+# storefront — the bike-shop front door: serves the embedded React SPA + the BFF API. The ONLY edge-exposed
+# service (see httproute.yaml). Calls the internal catalog service east-west (CATALOG_URL) — that call
+# propagates the trace, so a page load is one connected trace spanning storefront→catalog.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: storefront
+  labels:
+    app: storefront
+    app.kubernetes.io/name: shop-storefront
+    team: alpha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: storefront
+  strategy:
+    canary:
+      # Auto-promote in one step (ADR-056); maxSurge 1 + maxUnavailable 0 = zero-downtime even at 1 replica.
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        # P14 (ADR-077 D2): the OTel Operator injects OTEL_EXPORTER_OTLP_ENDPOINT (+ propagators/sampler) from
+        # the namespace's `platform` Instrumentation CR — collector endpoint is platform-managed, not hardcoded.
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
+      labels:
+        app: storefront
+        app.kubernetes.io/name: shop-storefront
+        team: alpha
+    spec:
+      serviceAccountName: app-alpha
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: storefront
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: storefront
+      containers:
+        - name: storefront
+          # Product-scoped ECR image (team-alpha/shop-storefront). :placeholder is the pre-first-deploy seed;
+          # the overlay's images: pins the signed digest CI promotes per stage. restrict-images admits team-alpha/shop-*.
+          image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-storefront:placeholder
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # East-west call to the internal catalog service (same namespace). The BFF fetches the catalog
+            # over this URL; internal/telemetry propagates the trace so the call is one connected span chain.
+            - name: CATALOG_URL
+              value: http://catalog
+            - name: OTEL_SERVICE_NAME
+              value: shop-storefront
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

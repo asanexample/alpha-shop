@@ -1,8 +1,10 @@
-# Keep the build context minimal — only go.mod + cmd/ are needed to build.
+# Keep the build context minimal. The storefront build needs web/ (the SPA source, built inside the image),
+# but never the host's node_modules or a stale dist — those are produced fresh in the node build stage.
 .git
 .github
 k8s
 *.md
 catalog-info.yaml
 .dockerignore
-Dockerfile
+web/node_modules
+web/dist

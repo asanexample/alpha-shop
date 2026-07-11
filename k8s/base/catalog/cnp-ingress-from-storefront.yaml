@@ -1,0 +1,24 @@
+# East-west ingress: catalog accepts traffic ONLY from the storefront, on port 8080, with Cilium mutual
+# authentication REQUIRED (ADR-057 Phase 2). authentication.mode: required makes Cilium run a SPIRE-backed
+# mTLS handshake before the connection is allowed — a workload with the right label but no valid SPIFFE SVID
+# is dropped at ingress. This is the zero-trust showcase: the catalog's data is reachable only by an
+# attested storefront, never by an impostor pod. (Environment namespaces default-deny ingress; this is the
+# additive allow. The caller half is storefront/cnp-egress-to-catalog.yaml.)
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-catalog-ingress-from-storefront
+spec:
+  endpointSelector:
+    matchLabels:
+      app: catalog
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: storefront
+      authentication:
+        mode: required
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

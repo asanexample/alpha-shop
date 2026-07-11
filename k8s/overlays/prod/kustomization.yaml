@@ -1,20 +1,23 @@
-# prod. Three replicas + a resource bump; digest pinned by CI per promote-by-PR (#377). prod runs a canary
-# (ADR-056): the base Rollout's trivial strategy is replaced with a stepped, weighted canary via the
-# Gateway-API plugin. The Application ignoreDifferences (argocd-apps) lets the plugin own the weights.
+# prod. Three replicas per service + a resource bump. The user-facing STOREFRONT runs a stepped, metric-gated
+# canary (ADR-056): its base Rollout strategy is replaced with a weighted Gateway-API canary. The internal
+# catalog keeps the base auto-promote strategy (no user traffic to shift). The Application ignoreDifferences
+# (argocd-apps) lets the Gateway-API plugin own the storefront weights.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
   - progressive.yaml
 replicas:
-  - name: app-alpha-shop
+  - name: storefront
+    count: 3
+  - name: catalog
     count: 3
 patches:
   - target:
       group: argoproj.io
       version: v1alpha1
       kind: Rollout
-      name: app-alpha-shop
+      name: storefront
     patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/resources
@@ -29,24 +32,24 @@ patches:
       group: argoproj.io
       version: v1alpha1
       kind: Rollout
-      name: app-alpha-shop
+      name: storefront
     patch: |-
       - op: replace
         path: /spec/strategy
         value:
           canary:
-            stableService: app-alpha-shop
-            canaryService: app-alpha-shop-canary
+            stableService: storefront
+            canaryService: storefront-canary
             trafficRouting:
               plugins:
                 argoproj-labs/gatewayAPI:
-                  httpRoute: app-alpha-shop
+                  httpRoute: storefront
             maxSurge: 1
             maxUnavailable: 0
             # Metric gate (W8c): background AnalysisRun over the whole canary — auto-rollback on a bad version.
             analysis:
               templates:
-                - templateName: app-alpha-shop-canary-gate
+                - templateName: storefront-canary-gate
               args:
                 - name: namespace
                   valueFrom:
@@ -56,7 +59,7 @@ patches:
               # W11 error-budget freeze — pre-flight, before any traffic shifts.
               - analysis:
                   templates:
-                    - templateName: app-alpha-shop-budget-freeze
+                    - templateName: storefront-budget-freeze
                   args:
                     - name: namespace
                       valueFrom:
@@ -71,17 +74,19 @@ patches:
       group: gateway.networking.k8s.io
       version: v1
       kind: HTTPRoute
-      name: app-alpha-shop
+      name: storefront
     patch: |-
       - op: replace
         path: /spec/rules/0/backendRefs
         value:
-          - name: app-alpha-shop
+          - name: storefront
             port: 80
             weight: 100
-          - name: app-alpha-shop-canary
+          - name: storefront-canary
             port: 80
             weight: 0
 images:
-  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-web
-    newTag: placeholder # CI replaces with the signed digest at deploy (promote-by-PR, #377)
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-storefront
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-catalog
+    newTag: placeholder
