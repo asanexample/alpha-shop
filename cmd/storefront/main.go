@@ -25,6 +25,11 @@ import (
 
 type server struct {
 	catalog *catalogclient.Client
+	// Buy-path upstreams, called east-west (trace-propagating http client). The cart/orders services are
+	// internal; the BFF is the only edge-facing surface, so it proxies/orchestrates them for the SPA.
+	httpc     *http.Client
+	cartURL   string
+	ordersURL string
 }
 
 func (s *server) routes() *http.ServeMux {
@@ -90,6 +95,9 @@ func (s *server) routes() *http.ServeMux {
 		writeJSON(w, http.StatusOK, detail)
 	})
 
+	// Buy path — cart proxy + checkout orchestration (storefront → cart / orders / payment east-west).
+	s.registerBuyPath(mux)
+
 	// The SPA (embedded under -tags storefront). "/" is the catch-all; the /api and /healthz patterns above
 	// are more specific, so they win. Absent (plain build) → API only.
 	if h := web.Handler(); h != nil {
@@ -117,7 +125,12 @@ func main() {
 	defer func() { _ = shutdown(context.Background()) }()
 
 	catalogURL := getenv("CATALOG_URL", "http://catalog")
-	srv := &server{catalog: catalogclient.New(catalogURL)}
+	srv := &server{
+		catalog:   catalogclient.New(catalogURL),
+		httpc:     telemetry.Client(),
+		cartURL:   getenv("CART_URL", "http://cart"),
+		ordersURL: getenv("ORDERS_URL", "http://orders"),
+	}
 	handler := telemetry.WrapHandler(srv.routes(), "http.server")
 
 	httpSrv := &http.Server{Addr: getenv("ADDR", ":8080"), Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
