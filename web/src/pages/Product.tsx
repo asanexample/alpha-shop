@@ -15,7 +15,7 @@ export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data, isLoading, isError, error, refetch } = useProduct(slug);
   const { brandName, categoryName, categoryKind, category } = useNavLookups();
-  const { add } = useCart();
+  const { addItem, isAdding } = useCart();
 
   const [size, setSize] = useState<string | null>(null);
   // Reset the selected size when the product changes.
@@ -59,8 +59,12 @@ export function ProductDetail() {
   const sizes = product.sizes ?? [];
 
   function handleAdd() {
-    const label = size ? `${product.name} · ${size}` : product.name;
-    add(label);
+    addItem({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      priceCents: sale ? (product.salePriceCents as number) : product.priceCents,
+    });
   }
 
   return (
@@ -127,10 +131,10 @@ export function ProductDetail() {
             <button
               type="button"
               className={`btn btn--lg ${styles.add}`}
-              disabled={!product.inStock}
+              disabled={!product.inStock || isAdding}
               onClick={handleAdd}
             >
-              {product.inStock ? "Add to cart" : "Sold out"}
+              {product.inStock ? (isAdding ? "Adding…" : "Add to cart") : "Sold out"}
             </button>
           </div>
 

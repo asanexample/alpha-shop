@@ -1,5 +1,6 @@
-// Local-only cart (P2 stub): clicking "Add to cart" increments a client-side count and shows a
-// toast. No server call yet — the BFF cart/orders endpoints come next.
+// BFF-backed cart state (TanStack Query). GET /api/cart is the source of truth; add/remove/clear are
+// mutations that invalidate it. The provider also owns the toast queue used by the Toaster.
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createContext,
   useCallback,
@@ -9,6 +10,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { api } from "../lib/api";
+import type { CartLine } from "../lib/types";
+
+// The snapshot needed to add a product to the cart (qty defaults to 1).
+export type CartAddInput = Omit<CartLine, "qty">;
+
+export const CART_QUERY_KEY = ["cart"] as const;
 
 interface Toast {
   id: number;
@@ -16,8 +24,22 @@ interface Toast {
 }
 
 interface CartValue {
+  // Cart data (derived from the BFF envelope).
+  items: CartLine[];
   count: number;
-  add: (label: string, qty?: number) => void;
+  subtotalCents: number;
+  isLoading: boolean;
+  isError: boolean;
+
+  // Mutations.
+  addItem: (item: CartAddInput, qty?: number) => void;
+  removeItem: (productId: string) => void;
+  clear: () => void;
+  isAdding: boolean;
+  isClearing: boolean;
+  removingId: string | null;
+
+  // Toasts.
   notify: (message: string) => void;
   toasts: Toast[];
   dismiss: (id: number) => void;
@@ -26,7 +48,9 @@ interface CartValue {
 const CartContext = createContext<CartValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [count, setCount] = useState(0);
+  const queryClient = useQueryClient();
+
+  // ---- Toasts ----
   const [toasts, setToasts] = useState<Toast[]>([]);
   const nextId = useRef(1);
   const timers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
@@ -50,17 +74,86 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [dismiss],
   );
 
-  const add = useCallback(
-    (label: string, qty = 1) => {
-      setCount((c) => c + qty);
-      pushToast(`Added to cart — ${label}`);
-    },
-    [pushToast],
+  // ---- Cart query ----
+  const cartQuery = useQuery({
+    queryKey: CART_QUERY_KEY,
+    queryFn: ({ signal }) => api.cart.get(signal),
+    staleTime: 10_000,
+  });
+
+  const invalidateCart = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY }),
+    [queryClient],
   );
 
+  // ---- Mutations ----
+  const addMut = useMutation({
+    mutationFn: ({ item, qty }: { item: CartAddInput; qty: number }) =>
+      api.cart.add({ ...item, qty }),
+    onSuccess: (env, vars) => {
+      queryClient.setQueryData(CART_QUERY_KEY, env);
+      void invalidateCart();
+      pushToast(`Added to cart — ${vars.item.name}`);
+    },
+    onError: () => pushToast("Couldn't add that to your cart. Please try again."),
+  });
+
+  const removeMut = useMutation({
+    mutationFn: (productId: string) => api.cart.remove(productId),
+    onSuccess: (env) => {
+      queryClient.setQueryData(CART_QUERY_KEY, env);
+      void invalidateCart();
+    },
+    onError: () => pushToast("Couldn't remove that item. Please try again."),
+  });
+
+  const clearMut = useMutation({
+    mutationFn: () => api.cart.clear(),
+    onSuccess: () => invalidateCart(),
+    onError: () => pushToast("Couldn't empty your cart. Please try again."),
+  });
+
+  const addItem = useCallback(
+    (item: CartAddInput, qty = 1) => addMut.mutate({ item, qty }),
+    [addMut],
+  );
+  const removeItem = useCallback((productId: string) => removeMut.mutate(productId), [removeMut]);
+  const clear = useCallback(() => clearMut.mutate(), [clearMut]);
+
+  const env = cartQuery.data;
+  const removingId = removeMut.isPending ? (removeMut.variables ?? null) : null;
+
   const value = useMemo<CartValue>(
-    () => ({ count, add, notify: pushToast, toasts, dismiss }),
-    [count, add, pushToast, toasts, dismiss],
+    () => ({
+      items: env?.cart.items ?? [],
+      count: env?.count ?? 0,
+      subtotalCents: env?.subtotalCents ?? 0,
+      isLoading: cartQuery.isLoading,
+      isError: cartQuery.isError,
+      addItem,
+      removeItem,
+      clear,
+      isAdding: addMut.isPending,
+      isClearing: clearMut.isPending,
+      removingId,
+      notify: pushToast,
+      toasts,
+      dismiss,
+    }),
+    [
+      env,
+      cartQuery.isLoading,
+      cartQuery.isError,
+      addItem,
+      removeItem,
+      clear,
+      addMut.isPending,
+      clearMut.isPending,
+      removingId,
+      pushToast,
+      toasts,
+      dismiss,
+    ],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
