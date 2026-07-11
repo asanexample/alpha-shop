@@ -1,15 +1,15 @@
-# East-west egress: storefront → catalog (same namespace, port 8080). Environment namespaces default-deny
-# egress, so the caller half is required even in-namespace (Cilium is identity-matched). DNS to CoreDNS is
-# allowed so the BFF can resolve the `catalog` Service name. The callee half + SPIRE mutual-auth lives in
-# catalog/cnp-ingress-from-storefront.yaml.
+# East-west egress: orders → payment (same namespace, port 8080), plus DNS to resolve the payment Service.
+# The environment default-denies egress; in-cluster pod-to-pod is Cilium identity-matched, so the broad
+# 0.0.0.0/0 egress (used for AWS APIs) does NOT cover it — this specific allow is required. The callee half +
+# SPIRE mutual auth is payment/cnp-ingress-from-orders.yaml.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-storefront-egress-to-catalog
+  name: allow-orders-egress-to-payment
 spec:
   endpointSelector:
     matchLabels:
-      app: storefront
+      app: orders
   egress:
     - toEndpoints:
         - matchLabels:
@@ -26,7 +26,7 @@ spec:
               - matchPattern: "*"
     - toEndpoints:
         - matchLabels:
-            app: catalog
+            app: payment
       toPorts:
         - ports:
             - port: "8080"

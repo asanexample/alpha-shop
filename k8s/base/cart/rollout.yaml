@@ -1,0 +1,113 @@
+# cart — internal cart service (ClusterIP, no HTTPRoute). Persists to the self-service DynamoDB table declared
+# in the Environment claim (services.cart.resources.items) and published as ITEMS_TABLE in the cart-resources
+# ConfigMap (ADR-073). AWS creds come from EKS Pod Identity bound to the app-alpha-cart SA; AWS_REGION is set
+# explicitly because IMDS region-discovery is egress-blocked.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: cart
+  labels:
+    app: cart
+    app.kubernetes.io/name: shop-cart
+    team: alpha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cart
+  strategy:
+    canary:
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
+      labels:
+        app: cart
+        app.kubernetes.io/name: shop-cart
+        team: alpha
+    spec:
+      serviceAccountName: app-alpha-cart
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: cart
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: cart
+      containers:
+        - name: cart
+          image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-cart:placeholder
+          ports:
+            - containerPort: 8080
+          # Self-service resource outputs (ADR-073): ITEMS_TABLE arrives here once the Composition provisions
+          # the DynamoDB table. optional:true → runs in-memory until then (and locally).
+          envFrom:
+            - configMapRef:
+                name: cart-resources
+                optional: true
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AWS_REGION
+              value: us-east-1
+            - name: OTEL_SERVICE_NAME
+              value: shop-cart
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
