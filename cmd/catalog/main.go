@@ -77,7 +77,7 @@ func main() {
 	store := catalog.New()
 	handler := telemetry.WrapHandler(newMux(store), "http.server")
 
-	srv := &http.Server{Addr: ":8080", Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
+	srv := &http.Server{Addr: getenv("ADDR", ":8080"), Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
 
 	go func() {
 		telemetry.Logger.Info("starting shop-catalog", "addr", srv.Addr)
@@ -117,4 +117,11 @@ func writeJSON(w http.ResponseWriter, status int, body any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(body)
+}
+
+func getenv(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
 }

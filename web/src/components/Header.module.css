@@ -1,0 +1,375 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--paper);
+  border-bottom: var(--border-ink);
+}
+
+/* ---- Thin ink utility bar ---- */
+.utility {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.utilityInner {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: 0.4rem var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.utility strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+.utilityNote {
+  color: var(--on-ink-muted);
+}
+@media (max-width: 640px) {
+  .utilityNote {
+    display: none;
+  }
+}
+
+/* ---- Main bar ---- */
+.bar {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: 0.85rem var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.wordmark .ring {
+  font-size: 1.5rem;
+  color: var(--ink);
+}
+.wordmark .alpha {
+  color: var(--ink);
+}
+
+/* ---- Desktop nav (mega-menu) ---- */
+.nav {
+  display: flex;
+  align-items: stretch;
+  gap: 0.15rem;
+  margin-inline: auto 0;
+  flex: 1;
+  justify-content: center;
+}
+.navItem {
+  position: relative;
+}
+.navTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.86rem;
+  color: var(--ink);
+  padding: 0.75rem 0.7rem;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+.navTop:hover,
+.navItem[data-open="true"] .navTop {
+  color: var(--ink);
+}
+.navTop .chev {
+  font-size: 0.7rem;
+  color: var(--muted);
+  transition: transform var(--dur) var(--ease);
+}
+.navItem[data-open="true"] .navTop .chev {
+  transform: rotate(180deg);
+}
+/* yellow underline on the active/open item */
+.navTop::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.45rem;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+.navItem[data-open="true"] .navTop::after {
+  transform: scaleX(1);
+}
+
+.panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 260px;
+  background: var(--surface);
+  border: var(--border-ink);
+  border-radius: var(--radius);
+  box-shadow: var(--lift);
+  padding: 0.5rem;
+  margin-top: 0.35rem;
+}
+/* Transparent hover bridge over the margin-top gap: the panel is absolutely positioned, so without this
+   the pointer crosses a dead zone between the button and the dropdown (firing mouseleave and closing it
+   before you reach a sub-item). The bridge keeps the button→panel path contiguous. */
+.panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.5rem;
+  height: 0.5rem;
+}
+.panelHead {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.35rem 0.6rem 0.5rem;
+  border-bottom: var(--border);
+  margin-bottom: 0.3rem;
+}
+.panelLink {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+.panelLink:hover,
+.panelLink:focus-visible {
+  background: var(--paper);
+}
+.panelLinkName {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 0.82rem;
+  color: var(--ink);
+}
+.panelLinkBlurb {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+/* ---- Right-side actions ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.35rem 0.55rem;
+}
+.search:focus-within {
+  border-color: var(--ink);
+}
+.search svg {
+  color: var(--muted);
+  font-size: 1rem;
+}
+.search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 12ch;
+  font-size: 0.85rem;
+}
+.search input::placeholder {
+  color: var(--muted);
+}
+
+.iconBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+.iconBtn:hover {
+  border-color: var(--ink);
+}
+
+.cartCount {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.menuToggle {
+  display: none;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .nav,
+  .search {
+    display: none;
+  }
+  .menuToggle {
+    display: inline-flex;
+  }
+  .wordmark {
+    margin-right: auto;
+  }
+}
+
+/* ---- Mobile drawer ---- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 25, 28, 0.42);
+  z-index: 70;
+  animation: fade var(--dur) var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .drawer {
+    animation: none;
+  }
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(88vw, 380px);
+  background: var(--paper);
+  z-index: 71;
+  display: flex;
+  flex-direction: column;
+  border-left: var(--border-ink);
+  animation: slide var(--dur) var(--ease);
+  overflow-y: auto;
+}
+.drawerHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem var(--gutter);
+  border-bottom: var(--border-ink);
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+}
+.drawerBody {
+  padding: 1rem var(--gutter) 2rem;
+}
+.drawerSearch {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: var(--border-ink);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.55rem 0.7rem;
+  margin-bottom: 1.25rem;
+}
+.drawerSearch svg {
+  color: var(--muted);
+}
+.drawerSearch input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 0.95rem;
+}
+.drawerGroup {
+  margin-bottom: 1.1rem;
+}
+.drawerGroupTitle {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.95rem;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.35rem;
+  border-bottom: var(--border);
+}
+.drawerLink {
+  display: block;
+  padding: 0.5rem 0.15rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+.drawerLink:hover {
+  color: var(--muted);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

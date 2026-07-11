@@ -1,0 +1,264 @@
+/* ---- Hero ---- */
+.hero {
+  position: relative;
+  background: var(--ink);
+  color: var(--on-ink);
+  overflow: hidden;
+  border-bottom: 3px solid var(--accent);
+}
+.topo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--on-ink-line);
+  pointer-events: none;
+}
+.heroInner {
+  position: relative;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: clamp(3.5rem, 10vw, 7rem) var(--gutter) clamp(3rem, 8vw, 6rem);
+}
+.heroEyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+}
+.heroTitle {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.92;
+  font-size: var(--step-6);
+  max-width: 15ch;
+}
+.heroTitle .em {
+  color: var(--accent);
+}
+.heroSub {
+  margin-top: 1.5rem;
+  max-width: 46ch;
+  font-size: var(--step-1);
+  color: var(--on-ink-muted);
+  line-height: 1.5;
+}
+.heroActions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.heroActions .ghostOnInk {
+  background: transparent;
+  color: var(--on-ink);
+  border-color: var(--on-ink);
+}
+.heroActions .ghostOnInk:hover {
+  background: var(--on-ink);
+  color: var(--ink);
+}
+.heroStats {
+  margin-top: 2.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-ink-muted);
+}
+.heroStats b {
+  display: block;
+  color: var(--on-ink);
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Generic section wrapper ---- */
+.section {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: var(--stack) var(--gutter) 0;
+}
+
+/* ---- Category tiles ---- */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: clamp(0.75rem, 1.6vw, 1rem);
+}
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.15rem 1.25rem;
+  min-height: 150px;
+  transition:
+    transform var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease);
+}
+.tile:hover {
+  transform: translateY(-3px);
+  border-color: var(--ink);
+  box-shadow: var(--lift);
+}
+.tileIcon {
+  width: 64px;
+  height: 40px;
+  color: var(--ink);
+}
+.tileKind {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tileName {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 1.05rem;
+  line-height: 1.05;
+  color: var(--ink);
+}
+.tileBlurb {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: auto;
+}
+.tileArrow {
+  position: absolute;
+  top: 1.1rem;
+  right: 1.15rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  transition: transform var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.tile:hover .tileArrow {
+  color: var(--ink);
+  transform: translateX(3px);
+}
+
+/* ---- Service band ---- */
+.service {
+  margin-top: var(--stack);
+  background: var(--surface);
+  border-top: var(--border-ink);
+  border-bottom: var(--border-ink);
+}
+.serviceInner {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--gutter);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: center;
+}
+@media (max-width: 780px) {
+  .serviceInner {
+    grid-template-columns: 1fr;
+  }
+}
+.serviceTitle {
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+  font-size: var(--step-4);
+}
+.serviceBody {
+  margin-top: 1rem;
+  color: var(--muted);
+  max-width: 44ch;
+  line-height: 1.55;
+}
+.serviceList {
+  display: grid;
+  gap: 0.85rem;
+}
+.serviceItem {
+  display: flex;
+  gap: 0.9rem;
+  padding-bottom: 0.85rem;
+  border-bottom: var(--border);
+}
+.serviceItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.servicePrice {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  margin-left: auto;
+}
+.serviceItem h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.serviceItem p {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ---- Community / heritage band ---- */
+.community {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: var(--stack) var(--gutter) 0;
+}
+.communityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+@media (max-width: 780px) {
+  .communityGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.commCard {
+  border: var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.5rem;
+}
+.commNum {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.commCard h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  font-size: 1.15rem;
+  margin: 0.5rem 0 0.5rem;
+}
+.commCard p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}

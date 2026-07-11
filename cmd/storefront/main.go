@@ -120,7 +120,7 @@ func main() {
 	srv := &server{catalog: catalogclient.New(catalogURL)}
 	handler := telemetry.WrapHandler(srv.routes(), "http.server")
 
-	httpSrv := &http.Server{Addr: ":8080", Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
+	httpSrv := &http.Server{Addr: getenv("ADDR", ":8080"), Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
 
 	go func() {
 		telemetry.Logger.Info("starting shop-storefront", "addr", httpSrv.Addr, "catalog", catalogURL)
