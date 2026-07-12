@@ -2,10 +2,12 @@
 //
 // It runs the OpenTelemetry SDK so each inbound request opens a server span exported to the platform OTLP
 // collector (OTEL_EXPORTER_OTLP_ENDPOINT, injected by the OTel Operator via the pod's inject-sdk annotation),
-// and the Pyroscope SDK for continuous profiling (PYROSCOPE_SERVER_ADDRESS) with per-span flame graphs
-// (trace→profiles). Logs are structured JSON via slog with the active span's trace_id/span_id stamped on every
-// line, so a log in Loki links straight to its trace in Tempo. Factored into one package because the shop is a
-// fleet of services (storefront, catalog, …) that all want the identical, correct wiring.
+// a MeterProvider on the same endpoint so otelhttp also emits RED metrics (http.server.request.duration →
+// http_server_request_duration_seconds in Mimir — the series the ADR-056 canary metric-gate and the shop
+// dashboards query), and the Pyroscope SDK for continuous profiling (PYROSCOPE_SERVER_ADDRESS) with per-span
+// flame graphs (trace→profiles). Logs are structured JSON via slog with the active span's trace_id/span_id
+// stamped on every line, so a log in Loki links straight to its trace in Tempo. Factored into one package
+// because the shop is a fleet of services (storefront, catalog, …) that all want the identical, correct wiring.
 //
 // Everything degrades cleanly when the endpoints are unset (local dev / tests): traces/profiles become no-ops.
 package telemetry
@@ -22,8 +24,10 @@ import (
 	"github.com/grafana/pyroscope-go"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/propagation"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
@@ -70,13 +74,33 @@ func Setup(ctx context.Context, serviceName string) (func(context.Context) error
 	otel.SetTracerProvider(otelpyroscope.NewTracerProvider(tp))
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
+	// Metrics on the same OTLP endpoint: a MeterProvider makes otelhttp emit RED metrics
+	// (http.server.request.duration + counts) exported to the collector → Mimir. Without it the SDK uses a
+	// no-op meter and the canary metric-gate / dashboards have no data. Same graceful degradation as traces —
+	// an unset/unreachable endpoint just fails the periodic export; the service still serves.
+	metricExp, err := otlpmetrichttp.New(ctx)
+	if err != nil {
+		return func(context.Context) error { return tp.Shutdown(ctx) }, fmt.Errorf("otlp metric exporter: %w", err)
+	}
+	mp := sdkmetric.NewMeterProvider(
+		sdkmetric.WithResource(res),
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)),
+	)
+	otel.SetMeterProvider(mp)
+
 	profiler := startProfiler(serviceName)
 
 	return func(ctx context.Context) error {
 		if profiler != nil {
 			_ = profiler.Stop()
 		}
-		return tp.Shutdown(ctx)
+		// Flush both signals; return the first error but always attempt both shutdowns.
+		errMP := mp.Shutdown(ctx)
+		errTP := tp.Shutdown(ctx)
+		if errTP != nil {
+			return errTP
+		}
+		return errMP
 	}, nil
 }
 
