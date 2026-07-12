@@ -1,0 +1,31 @@
+# Storefront autoscaling showcase (ADR-078 Phase 2 — elastic by construction). The edge service scales on CPU
+# under load (the k6 loadtest drives it); Karpenter then adds nodes if the cluster can't fit the new pods. The
+# shared ApplicationSet ignores the Rollout's .spec.replicas so this HPA owns the count at runtime without
+# selfHeal thrash. minReplicas 2 keeps the canary meaningful and satisfies the zero-downtime floor even on dev.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: storefront
+spec:
+  scaleTargetRef:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: storefront
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 120
