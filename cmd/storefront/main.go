@@ -19,8 +19,10 @@ import (
 	"time"
 
 	"github.com/asanexample/alpha-shop/internal/catalogclient"
+	"github.com/asanexample/alpha-shop/internal/flags"
 	"github.com/asanexample/alpha-shop/internal/telemetry"
 	"github.com/asanexample/alpha-shop/web"
+	"github.com/open-feature/go-sdk/openfeature"
 )
 
 type server struct {
@@ -30,6 +32,9 @@ type server struct {
 	httpc     *http.Client
 	cartURL   string
 	ordersURL string
+	// Feature flags (ADR-099): evaluated in-process (flagd resolver) against flagship's sync source; the OTel
+	// hook stamps feature_flag.* onto the checkout span.
+	flags *openfeature.Client
 }
 
 func (s *server) routes() *http.ServeMux {
@@ -125,11 +130,18 @@ func main() {
 	defer func() { _ = shutdown(context.Background()) }()
 
 	catalogURL := getenv("CATALOG_URL", "http://catalog")
+	// Feature flags via flagship's sync source (ADR-099). Unset FLAGSHIP_SYNC_URL → in-code defaults (local dev).
+	flagClient, err := flags.Setup(ctx, getenv("FLAGSHIP_SYNC_URL", ""))
+	if err != nil {
+		telemetry.Logger.Error("feature-flag init failed; using in-code defaults", "err", err)
+		flagClient = openfeature.NewClient("alpha-shop")
+	}
 	srv := &server{
 		catalog:   catalogclient.New(catalogURL),
 		httpc:     telemetry.Client(),
 		cartURL:   getenv("CART_URL", "http://cart"),
 		ordersURL: getenv("ORDERS_URL", "http://orders"),
+		flags:     flagClient,
 	}
 	handler := telemetry.WrapHandler(srv.routes(), "http.server")
 

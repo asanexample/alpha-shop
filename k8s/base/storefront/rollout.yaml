@@ -79,6 +79,14 @@ spec:
               value: service.namespace=alpha-shop
             - name: PYROSCOPE_SERVER_ADDRESS
               value: https://preprod-profiles.aws.refplat.org
+            # Feature-flag sync source (ADR-099). flagd polls this flagship endpoint every 15s in-process; the
+            # OpenFeature OTel hook stamps feature_flag.* onto the checkout span. Reached IN-CLUSTER via flagship's
+            # Service DNS — the intended consumer path (flagship's HTTPRoute/dashboard host is on the internal
+            # gateway; the sync endpoint is Service-only). Egress is already open (the Composition's
+            # allow-dns-egress permits 0.0.0.0/0); flagship admits env-namespace consumers via its
+            # allow-sync-ingress CNP. Unreachable → evals fall back to in-code defaults (fail-static).
+            - name: FLAGSHIP_SYNC_URL
+              value: http://flagship-server.platform-flagship-dev.svc.cluster.local/sync/alpha/shop/dev
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

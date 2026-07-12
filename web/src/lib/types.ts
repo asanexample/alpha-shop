@@ -115,6 +115,8 @@ export interface Order {
   status: OrderStatus;
   paymentId: string;
   reason?: string;
+  experience?: string; // flagship-flagged checkout variant (standard | express)
+  shipping?: string;
   createdAt: string;
 }
 

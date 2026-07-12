@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/asanexample/alpha-shop/internal/flags"
 	"github.com/asanexample/alpha-shop/internal/telemetry"
 )
 
@@ -75,7 +76,12 @@ func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderReq := map[string]any{"sessionId": sid, "lines": cart.Items, "card": body.Card}
+	// Feature-flag the checkout experience (ADR-099). targetingKey = the session, so a percentage rollout is
+	// sticky per visitor. The OpenFeature OTel hook stamps feature_flag.checkout-experience.* onto THIS request
+	// span (r.Context()) — so the trace shows which variant a checkout ran. "express" earns free expedited
+	// handling (the orders service applies it). flagship unreachable → "standard" (fail-static).
+	experience, _ := s.flags.StringValue(r.Context(), "checkout-experience", "standard", flags.EvalContext(sid))
+	orderReq := map[string]any{"sessionId": sid, "lines": cart.Items, "card": body.Card, "experience": experience}
 	reqBody, _ := json.Marshal(orderReq)
 	raw, status, err := s.call(r.Context(), http.MethodPost, s.ordersURL+"/api/orders", bytes.NewReader(reqBody))
 	if err != nil {
