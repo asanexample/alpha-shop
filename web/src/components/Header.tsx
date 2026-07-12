@@ -26,7 +26,7 @@ function useGroupedCategories(categories: Category[] | undefined) {
 export function Header() {
   const { data } = useNav();
   const groups = useGroupedCategories(data?.categories);
-  const { count, notify } = useCart();
+  const { count } = useCart();
   const navigate = useNavigate();
 
   const [openKind, setOpenKind] = useState<Kind | null>(null);
@@ -171,15 +171,14 @@ export function Header() {
             />
           </form>
 
-          <button
-            type="button"
+          <Link
+            to="/cart"
             className={styles.iconBtn}
             aria-label={`Cart — ${count} item${count === 1 ? "" : "s"}`}
-            onClick={() => notify("Your cart is a preview — checkout is coming soon.")}
           >
             <CartIcon />
             {count > 0 ? <span className={styles.cartCount}>{count}</span> : null}
-          </button>
+          </Link>
 
           <button
             type="button"

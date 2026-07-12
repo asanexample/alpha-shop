@@ -80,6 +80,44 @@ export const KIND_LABEL: Record<Kind, string> = {
   apparel: "Apparel",
 };
 
+// ---- Buy path: cart + orders (mirrors internal/cart + internal/orders) ----
+
+// One line in the cart / an order. priceCents is snapshotted at add-time.
+export interface CartLine {
+  productId: string;
+  slug?: string;
+  name: string;
+  priceCents: number;
+  qty: number;
+}
+
+export interface Cart {
+  sessionId: string;
+  items: CartLine[];
+  updatedAt: string;
+}
+
+// GET /api/cart and the cart mutations return the cart plus derived totals.
+export interface CartEnvelope {
+  cart: Cart;
+  count: number;
+  subtotalCents: number;
+}
+
+export type OrderStatus = "placed" | "declined";
+
+// A completed (or declined) checkout. reason is present only when declined.
+export interface Order {
+  id: string;
+  sessionId: string;
+  lines: CartLine[];
+  totalCents: number;
+  status: OrderStatus;
+  paymentId: string;
+  reason?: string;
+  createdAt: string;
+}
+
 // A product carries slugs; true = on sale.
 export function isOnSale(p: Product): boolean {
   return typeof p.salePriceCents === "number" && p.salePriceCents > 0 && p.salePriceCents < p.priceCents;

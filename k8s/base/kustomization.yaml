@@ -3,22 +3,39 @@
 # patches the real host onto the storefront HTTPRoute — so NO `namespace:` here and the route host is a
 # fail-safe placeholder. Per-stage overlays carry each service's image digest + any real stage deltas.
 #
-# One Product, MANY services (ADR-067): storefront (edge: SPA + BFF) and catalog (internal, east-west only).
-# The Release records one digest per service; the ApplicationSet injects one image override per service.
+# One Product, MANY services (ADR-067): storefront (edge: SPA + BFF) + the internal, east-west-only services
+# catalog (browse), cart, orders, payment (buy path). The Release records one digest per service; the
+# ApplicationSet injects one image override per service. East-west is SPIRE-mTLS (ADR-057): each internal
+# callee has an authentication:required ingress CNP, and each caller a matching egress CNP.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  # shared ServiceAccounts (app-alpha for no-resource services; per-service SAs for cart/orders)
   - serviceaccount.yaml
+  - serviceaccounts-buypath.yaml
   # storefront — the edge service (SPA + BFF)
   - storefront/rollout.yaml
   - storefront/service.yaml
   - storefront/httproute.yaml
-  - storefront/cnp-egress-to-catalog.yaml
-  # catalog — internal, east-west only
+  - storefront/cnp-egress-eastwest.yaml
+  # catalog — internal (browse)
   - catalog/rollout.yaml
   - catalog/service.yaml
   - catalog/cnp-ingress-from-storefront.yaml
-  # shared observability egress (both services)
+  # cart — internal (buy path; self-service DynamoDB)
+  - cart/rollout.yaml
+  - cart/service.yaml
+  - cart/cnp-ingress-from-storefront.yaml
+  # orders — internal (buy path; self-service DynamoDB + SQS; calls payment)
+  - orders/rollout.yaml
+  - orders/service.yaml
+  - orders/cnp-ingress-from-storefront.yaml
+  - orders/cnp-egress-to-payment.yaml
+  # payment — internal (buy path; mock authorizer)
+  - payment/rollout.yaml
+  - payment/service.yaml
+  - payment/cnp-ingress-from-orders.yaml
+  # shared observability egress (all services)
   - netpol-egress-otel.yaml
   - netpol-egress-pyroscope.yaml
 # Teach kustomize's replicas/commonLabels transformers about Argo Rollouts, and rewrite HTTPRoute backendRefs

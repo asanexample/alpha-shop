@@ -1,5 +1,15 @@
-// Same-origin BFF client. All endpoints are GET + JSON (see cmd/storefront/main.go).
-import type { HomeData, NavData, ProductDetail, ProductList } from "./types";
+// Same-origin BFF client. Browse endpoints are plain GET + JSON; the buy-path (cart/checkout/orders)
+// endpoints additionally carry the X-Shop-Session header (see cmd/storefront/buypath.go).
+import { getSessionId } from "./session";
+import type {
+  CartEnvelope,
+  CartLine,
+  HomeData,
+  NavData,
+  Order,
+  ProductDetail,
+  ProductList,
+} from "./types";
 
 export class ApiError extends Error {
   status: number;
@@ -29,6 +39,45 @@ async function getJSON<T>(path: string, signal?: AbortSignal): Promise<T> {
     }
     throw new ApiError(detail || `Request failed (${res.status}).`, res.status);
   }
+  return (await res.json()) as T;
+}
+
+// Session-aware request for the buy-path endpoints. Attaches X-Shop-Session, serialises a JSON body
+// when given, and tolerates a 204 (empty) response.
+async function sessionJSON<T>(
+  path: string,
+  init: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+): Promise<T> {
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+    "X-Shop-Session": getSessionId(),
+  };
+  if (init.body !== undefined) headers["Content-Type"] = "application/json";
+
+  let res: Response;
+  try {
+    res = await fetch(path, {
+      method: init.method ?? "GET",
+      headers,
+      body: init.body !== undefined ? JSON.stringify(init.body) : undefined,
+      signal: init.signal,
+    });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") throw err;
+    throw new ApiError("Can't reach the shop right now. Check your connection and try again.", 0);
+  }
+  if (!res.ok) {
+    // The BFF returns { error } for 400 / 404 / 502.
+    let detail = "";
+    try {
+      const body = (await res.json()) as { error?: string };
+      detail = body?.error ?? "";
+    } catch {
+      /* ignore parse errors */
+    }
+    throw new ApiError(detail || `Request failed (${res.status}).`, res.status);
+  }
+  if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
 
@@ -66,4 +115,20 @@ export const api = {
   },
   product: (idOrSlug: string, signal?: AbortSignal) =>
     getJSON<ProductDetail>(`/api/products/${encodeURIComponent(idOrSlug)}`, signal),
+
+  // ---- Buy path (session header) ----
+  cart: {
+    get: (signal?: AbortSignal) => sessionJSON<CartEnvelope>("/api/cart", { signal }),
+    add: (line: CartLine) =>
+      sessionJSON<CartEnvelope>("/api/cart/items", { method: "POST", body: line }),
+    remove: (productId: string) =>
+      sessionJSON<CartEnvelope>(`/api/cart/items/${encodeURIComponent(productId)}`, {
+        method: "DELETE",
+      }),
+    clear: () => sessionJSON<void>("/api/cart", { method: "DELETE" }),
+  },
+  // Checkout returns HTTP 200 for both "placed" and "declined"; a 400 { error } means the cart is empty.
+  checkout: (card: string) => sessionJSON<Order>("/api/checkout", { method: "POST", body: { card } }),
+  order: (id: string, signal?: AbortSignal) =>
+    sessionJSON<Order>(`/api/orders/${encodeURIComponent(id)}`, { signal }),
 };

@@ -1,0 +1,38 @@
+# East-west egress from the storefront BFF to the internal services it aggregates: catalog (browse), cart, and
+# orders (buy path). Same namespace, port 8080. The environment default-denies egress and in-cluster
+# pod-to-pod is Cilium identity-matched (the broad 0.0.0.0/0 egress used for AWS does NOT cover pods), so these
+# specific allows are required. DNS to CoreDNS resolves the Service names. Each callee enforces the SPIRE
+# mutual-auth ingress half (cart/orders/catalog cnp-ingress-from-storefront.yaml).
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-storefront-egress-eastwest
+spec:
+  endpointSelector:
+    matchLabels:
+      app: storefront
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            app: catalog
+        - matchLabels:
+            app: cart
+        - matchLabels:
+            app: orders
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

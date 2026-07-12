@@ -52,3 +52,60 @@ jobs:
       image: ${{ needs.build-catalog.outputs.image }}
       digest: ${{ needs.build-catalog.outputs.digest }}
       product: shop
+
+  build-cart:
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/build-sign.yml@7a739dcd25cff26ac7c33f2301166a1c34301b6c
+    with:
+      app: shop-cart
+      product: shop
+      tag: ${{ github.event.pull_request.head.sha }}
+      dockerfile: services/cart/Dockerfile
+
+  provenance-cart:
+    needs: build-cart
+    if: github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.fork != true
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/slsa-provenance.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
+    with:
+      image: ${{ needs.build-cart.outputs.image }}
+      digest: ${{ needs.build-cart.outputs.digest }}
+      product: shop
+
+  build-orders:
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/build-sign.yml@7a739dcd25cff26ac7c33f2301166a1c34301b6c
+    with:
+      app: shop-orders
+      product: shop
+      tag: ${{ github.event.pull_request.head.sha }}
+      dockerfile: services/orders/Dockerfile
+
+  provenance-orders:
+    needs: build-orders
+    if: github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.fork != true
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/slsa-provenance.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
+    with:
+      image: ${{ needs.build-orders.outputs.image }}
+      digest: ${{ needs.build-orders.outputs.digest }}
+      product: shop
+
+  build-payment:
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/build-sign.yml@7a739dcd25cff26ac7c33f2301166a1c34301b6c
+    with:
+      app: shop-payment
+      product: shop
+      tag: ${{ github.event.pull_request.head.sha }}
+      dockerfile: services/payment/Dockerfile
+
+  provenance-payment:
+    needs: build-payment
+    if: github.actor != 'dependabot[bot]' && github.event.pull_request.head.repo.fork != true
+    permissions: { id-token: write, contents: read }
+    uses: asanexample/trusted-ci/.github/workflows/slsa-provenance.yml@28dbe1b66c2be6b05801575617d307cafd4a67e7
+    with:
+      image: ${{ needs.build-payment.outputs.image }}
+      digest: ${{ needs.build-payment.outputs.digest }}
+      product: shop

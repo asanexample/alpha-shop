@@ -1,0 +1,21 @@
+# East-west ingress: payment accepts traffic ONLY from orders, port 8080, SPIRE mutual auth required
+# (ADR-057). Additive allow over the environment default-deny ingress. The caller half is
+# orders/cnp-egress-to-payment.yaml.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-payment-ingress-from-orders
+spec:
+  endpointSelector:
+    matchLabels:
+      app: payment
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: orders
+      authentication:
+        mode: required
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

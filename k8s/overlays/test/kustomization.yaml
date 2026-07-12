@@ -8,8 +8,20 @@ replicas:
     count: 1
   - name: catalog
     count: 1
+  - name: cart
+    count: 1
+  - name: orders
+    count: 1
+  - name: payment
+    count: 1
 images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-storefront
     newTag: placeholder
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-catalog
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-cart
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-orders
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-payment
     newTag: placeholder
