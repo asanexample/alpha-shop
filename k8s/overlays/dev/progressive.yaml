@@ -1,0 +1,40 @@
+# Dev canary showcase (ADR-056) for the STOREFRONT — the same weighted, metric-gated Gateway-API canary as prod
+# (overlays/prod), tuned for a live demo (shorter pauses). The base storefront Service is the stable target; the
+# storefront HTTPRoute is patched to a weighted stable+canary pair (kustomization.yaml) and the Gateway-API
+# plugin shifts the weights per step. The shared per-Product ApplicationSet already ignores the plugin-owned
+# HTTPRoute weights + the Rollout's runtime fields (argocd-apps delivery.tf), so ArgoCD won't fight the rollout.
+apiVersion: v1
+kind: Service
+metadata:
+  name: storefront-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: storefront
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+---
+# Metric gate (ADR-056 W8c): background analysis over the canary. Queries the hub Mimir for the storefront's
+# HTTP success rate and auto-rolls-back if it drops below 95%. Prometheus provider (a job image would be denied
+# by Kyverno's team-ECR restriction). Fails SAFE on no data (len(result)==0 passes) — same as prod, so a deploy
+# is never blocked spuriously before the storefront emits request metrics.
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: storefront-canary-gate
+spec:
+  args:
+    - name: namespace
+  metrics:
+    - name: success-rate
+      interval: 20s
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: https://preprod-mimir.aws.refplat.org/prometheus
+          query: |
+            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",http_response_status_code!~"5.."}[2m]))
+            / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}"}[2m]))
+      successCondition: "len(result) == 0 || result[0] >= 0.95"

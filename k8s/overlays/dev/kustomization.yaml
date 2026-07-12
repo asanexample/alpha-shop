@@ -6,9 +6,12 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - progressive.yaml # storefront canary Service + metric-gate AnalysisTemplate (ADR-056 demo)
+  - hpa.yaml # storefront CPU HPA (ADR-078 autoscaling demo)
 replicas:
+  # storefront runs 2 (canary needs a stable+canary split; HPA min is 2). The HPA owns the count at runtime.
   - name: storefront
-    count: 1
+    count: 2
   - name: catalog
     count: 1
   - name: cart
@@ -28,3 +31,56 @@ images:
     newTag: placeholder
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-payment
     newTag: placeholder
+patches:
+  # Replace the storefront's base strategy (setWeight 100 = instant) with a stepped, metric-gated Gateway-API
+  # canary — the dev showcase of ADR-056. Demo-tuned pauses (30s) so a rollout steps through visibly. The
+  # internal services keep the base auto-promote strategy (no user traffic to shift).
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: storefront
+    patch: |-
+      - op: replace
+        path: /spec/strategy
+        value:
+          canary:
+            stableService: storefront
+            canaryService: storefront-canary
+            trafficRouting:
+              plugins:
+                argoproj-labs/gatewayAPI:
+                  httpRoute: storefront
+            maxSurge: 1
+            maxUnavailable: 0
+            analysis:
+              templates:
+                - templateName: storefront-canary-gate
+              args:
+                - name: namespace
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+            steps:
+              - setWeight: 20
+              - pause: { duration: 30 }
+              - setWeight: 50
+              - pause: { duration: 30 }
+              - setWeight: 100
+  # Split the storefront HTTPRoute into a weighted stable+canary pair; the Gateway-API plugin shifts the weights
+  # per step (git holds the at-rest 100/0, restored between rollouts).
+  - target:
+      group: gateway.networking.k8s.io
+      version: v1
+      kind: HTTPRoute
+      name: storefront
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/backendRefs
+        value:
+          - name: storefront
+            port: 80
+            weight: 100
+          - name: storefront-canary
+            port: 80
+            weight: 0
