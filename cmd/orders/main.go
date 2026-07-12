@@ -1,10 +1,13 @@
 // Command orders is the bike-shop orders service (team alpha, product shop, service orders).
 //
 // Internal, east-west only (ClusterIP, no HTTPRoute): the storefront BFF calls it to place an order. It
-// orchestrates the checkout — authorize payment (east-west call to the payment service), persist the order to
-// the self-service DynamoDB table (ORDERS_TABLE), and emit an order-placed event to the self-service SQS queue
-// (EVENTS_QUEUE_URL) — all in one distributed trace: storefront → orders → payment. Backends fall back to
-// memory / no-op when the self-service ConfigMap keys are unset (local dev).
+// orchestrates the checkout — authorize payment (east-west call to the payment service), ask Bravo Dispatch's
+// intake to kick off a real shipment (cross-team east-west, ADR-101), persist the order to the self-service
+// DynamoDB table (ORDERS_TABLE), and emit an order-placed event to the self-service SQS queue
+// (EVENTS_QUEUE_URL) — all in one distributed trace: storefront → orders → payment (+ orders → bravo
+// intake → shipments/dispatch-worker, a trace that now spans two teams). Backends fall back to memory / no-op
+// when the self-service ConfigMap keys are unset (local dev); the dispatch call is skipped entirely when
+// DISPATCH_URL is unset (any stage without the ServiceGrant-backed dependency declared).
 package main
 
 import (
@@ -21,6 +24,7 @@ import (
 
 	"github.com/asanexample/alpha-shop/internal/awskv"
 	"github.com/asanexample/alpha-shop/internal/awsqueue"
+	"github.com/asanexample/alpha-shop/internal/dispatchclient"
 	"github.com/asanexample/alpha-shop/internal/orders"
 	"github.com/asanexample/alpha-shop/internal/payment"
 	"github.com/asanexample/alpha-shop/internal/paymentclient"
@@ -28,10 +32,11 @@ import (
 )
 
 type server struct {
-	store  *orders.Store
-	events awsqueue.Publisher
-	pay    *paymentclient.Client
-	now    func() time.Time
+	store    *orders.Store
+	events   awsqueue.Publisher
+	pay      *paymentclient.Client
+	dispatch *dispatchclient.Client
+	now      func() time.Time
 }
 
 type placeRequest struct {
@@ -96,6 +101,24 @@ func (s *server) routes() *http.ServeMux {
 			o.Status, o.Reason = orders.Declined, res.Reason
 		}
 
+		if o.Status == orders.Placed && s.dispatch.Enabled() {
+			// Cross-team east-west call (ADR-101): ask Bravo Dispatch's intake to create + route a real
+			// shipment. Best-effort — a failed or unreachable dispatch must not fail an already-paid order;
+			// it just means no ShipmentID this time (the demo equivalent of "we'll email you a tracking
+			// number shortly"). No address capture in this checkout, so recipient/origin/destination are
+			// synthesized demo values, same spirit as the Card field above.
+			sh, err := s.dispatch.CreateShipment(r.Context(), dispatchclient.CreateShipmentRequest{
+				Recipient:   "Alpha Bikes customer " + o.SessionID,
+				Origin:      "Alpha Bikes Warehouse",
+				Destination: "Customer Address on File",
+			})
+			if err != nil {
+				log.ErrorContext(r.Context(), "dispatch shipment request failed (continuing)", "orderId", o.ID, "err", err)
+			} else {
+				o.ShipmentID = sh.ID
+			}
+		}
+
 		if err := s.store.Save(r.Context(), o); err != nil {
 			log.ErrorContext(r.Context(), "order save failed", "err", err)
 			writeJSON(w, http.StatusBadGateway, map[string]string{"error": "could not save order"})
@@ -147,12 +170,13 @@ func main() {
 		os.Exit(1)
 	}
 	srv := &server{
-		store:  orders.New(kv),
-		events: events,
-		pay:    paymentclient.New(getenv("PAYMENT_URL", "http://payment")),
-		now:    func() time.Time { return time.Now().UTC() },
+		store:    orders.New(kv),
+		events:   events,
+		pay:      paymentclient.New(getenv("PAYMENT_URL", "http://payment")),
+		dispatch: dispatchclient.New(os.Getenv("DISPATCH_URL")), // empty = no ServiceGrant-backed dependency in this stage
+		now:      func() time.Time { return time.Now().UTC() },
 	}
-	telemetry.Logger.Info("orders backends", "store", srv.store.Backend(), "events", events.Backend())
+	telemetry.Logger.Info("orders backends", "store", srv.store.Backend(), "events", events.Backend(), "dispatch", srv.dispatch.Enabled())
 
 	httpSrv := &http.Server{Addr: getenv("ADDR", ":8080"), Handler: telemetry.WrapHandler(srv.routes(), "http.server"), ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
 
