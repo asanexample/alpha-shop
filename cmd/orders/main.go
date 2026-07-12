@@ -35,9 +35,10 @@ type server struct {
 }
 
 type placeRequest struct {
-	SessionID string        `json:"sessionId"`
-	Lines     []orders.Line `json:"lines"`
-	Card      string        `json:"card,omitempty"`
+	SessionID  string        `json:"sessionId"`
+	Lines      []orders.Line `json:"lines"`
+	Card       string        `json:"card,omitempty"`
+	Experience string        `json:"experience,omitempty"` // flagship checkout variant (standard | express)
 }
 
 func (s *server) routes() *http.ServeMux {
@@ -68,7 +69,12 @@ func (s *server) routes() *http.ServeMux {
 			SessionID:  req.SessionID,
 			Lines:      req.Lines,
 			TotalCents: total,
+			Experience: req.Experience,
+			Shipping:   "Standard (5–7 days)",
 			CreatedAt:  s.now(),
+		}
+		if req.Experience == "express" {
+			o.Shipping = "Express — free expedited (1–2 days)"
 		}
 
 		// Authorize payment east-west (storefront → orders → payment in one trace).

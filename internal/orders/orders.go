@@ -37,6 +37,10 @@ type Order struct {
 	Status     Status    `json:"status"`
 	PaymentID  string    `json:"paymentId,omitempty"`
 	Reason     string    `json:"reason,omitempty"` // decline reason, when Status=Declined
+	// Experience is the flagship-flagged checkout variant that ran (standard | express, ADR-099). Express
+	// earns free expedited handling — a flag decision made durable on the order.
+	Experience string    `json:"experience,omitempty"`
+	Shipping   string    `json:"shipping,omitempty"`
 	CreatedAt  time.Time `json:"createdAt"`
 }
 

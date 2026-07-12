@@ -106,6 +106,17 @@ export function Order() {
             </li>
           ))}
         </ul>
+        {!declined && order.shipping ? (
+          <div className={styles.shipRow}>
+            <span>
+              Shipping
+              {order.experience === "express" ? (
+                <span className={styles.expressBadge}>EXPRESS</span>
+              ) : null}
+            </span>
+            <span className={styles.shipValue}>{order.shipping}</span>
+          </div>
+        ) : null}
         <div className={styles.totalRow}>
           <span>{declined ? "Amount" : "Total"}</span>
           <span className={`mono ${styles.total}`}>{formatCents(order.totalCents)}</span>
