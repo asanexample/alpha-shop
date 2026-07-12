@@ -148,6 +148,27 @@ func (s *server) routes() *http.ServeMux {
 		writeJSON(w, http.StatusOK, o)
 	})
 
+	// ADR-101 verification tool ONLY — lets an operator ask orders to try an arbitrary method/path against
+	// Bravo Dispatch's intake, to directly observe the ServiceGrant's L7 CiliumNetworkPolicy either allowing
+	// (POST /shipments) or rejecting (anything else) it at the network layer, distinct from an app-level 404.
+	// Internal-only route (orders has no HTTPRoute), and a no-op when DISPATCH_URL is unset. Not gated further
+	// since it can only ever reach intake — the same single cross-team hop orders already has by design.
+	mux.HandleFunc("POST /debug/dispatch-probe", func(w http.ResponseWriter, r *http.Request) {
+		if !s.dispatch.Enabled() {
+			writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "DISPATCH_URL not configured"})
+			return
+		}
+		var req struct {
+			Method string `json:"method"`
+			Path   string `json:"path"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Method == "" || req.Path == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "body must be {\"method\":...,\"path\":...}"})
+			return
+		}
+		writeJSON(w, http.StatusOK, s.dispatch.Probe(r.Context(), req.Method, req.Path))
+	})
+
 	return mux
 }
 
