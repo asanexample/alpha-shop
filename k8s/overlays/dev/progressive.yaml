@@ -39,6 +39,6 @@ spec:
         prometheus:
           address: https://preprod-mimir.aws.refplat.org/prometheus
           query: |
-            sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*",http_response_status_code!~"5.."}[2m]))
-            / sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*"}[2m]))
+            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",job="alpha-shop/shop-storefront",http_response_status_code!~"5.."}[2m]))
+            / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",job="alpha-shop/shop-storefront"}[2m]))
       successCondition: "len(result) == 0 || result[0] >= 0.95"

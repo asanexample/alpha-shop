@@ -36,8 +36,8 @@ spec:
           # service.namespace/service.name -> `job`, and the stage is scoped via the `instance` prefix (which
           # encodes k8s.namespace.name) — NOT `k8s_namespace_name` (the Beyla/remote-write convention).
           query: |
-            sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*",http_response_status_code!~"5.."}[2m]))
-            / sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*"}[2m]))
+            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",job="alpha-shop/shop-storefront",http_response_status_code!~"5.."}[2m]))
+            / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",job="alpha-shop/shop-storefront"}[2m]))
       successCondition: "len(result) == 0 || result[0] >= 0.95"
 ---
 # W11 error-budget freeze (ADR-056) — a one-shot PRE-FLIGHT gate BEFORE any traffic shifts: if the storefront is
