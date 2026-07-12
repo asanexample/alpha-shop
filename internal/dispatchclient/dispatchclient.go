@@ -12,7 +12,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/asanexample/alpha-shop/internal/telemetry"
@@ -73,32 +72,4 @@ func (c *Client) CreateShipment(ctx context.Context, req CreateShipmentRequest) 
 		return Shipment{}, fmt.Errorf("dispatch intake decode: %w", err)
 	}
 	return out, nil
-}
-
-// ProbeResult is the raw outcome of an arbitrary method/path call to intake — used only by Probe, to observe
-// the ServiceGrant's L7 CiliumNetworkPolicy enforcing (or not) at the network layer, distinct from a normal
-// application-level response.
-type ProbeResult struct {
-	StatusCode int    `json:"statusCode,omitempty"`
-	Body       string `json:"body,omitempty"`
-	Err        string `json:"err,omitempty"`
-}
-
-// Probe sends an arbitrary method+path to intake and reports the raw outcome — including a transport-level
-// failure (connection reset/timeout), which is what a CiliumNetworkPolicy L7 rejection at the network layer
-// looks like from the caller's side, as opposed to a normal HTTP error response from intake's own app code.
-// ADR-101 verification tool ONLY (cmd/orders' /debug/dispatch-probe route) — ProbeResult.Err is populated on
-// any transport failure; a non-empty StatusCode+Body means the request reached intake's app.
-func (c *Client) Probe(ctx context.Context, method, path string) ProbeResult {
-	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, nil)
-	if err != nil {
-		return ProbeResult{Err: err.Error()}
-	}
-	resp, err := c.http.Do(req)
-	if err != nil {
-		return ProbeResult{Err: err.Error()}
-	}
-	defer func() { _ = resp.Body.Close() }()
-	body, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
-	return ProbeResult{StatusCode: resp.StatusCode, Body: string(body)}
 }
