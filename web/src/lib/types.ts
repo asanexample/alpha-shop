@@ -117,6 +117,7 @@ export interface Order {
   reason?: string;
   experience?: string; // flagship-flagged checkout variant (standard | express)
   shipping?: string;
+  shipmentId?: string; // Bravo Dispatch tracking number (e.g. "BD-10023"), when dispatch was reachable
   createdAt: string;
 }
 

@@ -69,7 +69,9 @@ export function Order() {
         <p className={styles.lede}>
           {declined
             ? order.reason || "Your card was declined and you haven't been charged."
-            : "Your order is confirmed. We're prepping it in the workshop — you'll get a shipping note soon."}
+            : order.shipmentId
+              ? "Your order is confirmed and already on its way — Bravo Dispatch has it in hand."
+              : "Your order is confirmed. We're prepping it in the workshop — you'll get a shipping note soon."}
         </p>
       </header>
 
@@ -86,6 +88,12 @@ export function Order() {
           <span className={styles.metaLabel}>Status</span>
           <span className={`mono ${styles.metaValue}`}>{order.status}</span>
         </div>
+        {order.shipmentId ? (
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Tracking</span>
+            <span className={`mono ${styles.metaValue}`}>{order.shipmentId}</span>
+          </div>
+        ) : null}
       </div>
 
       <section className={styles.card} aria-label="Order items">

@@ -1,6 +1,9 @@
 # orders — internal orders service (ClusterIP, no HTTPRoute). Orchestrates checkout: authorizes payment
-# east-west (PAYMENT_URL), persists to the self-service DynamoDB table (ORDERS_TABLE) and emits an order-placed
-# event to the self-service SQS queue (EVENTS_QUEUE_URL) — both from the orders-resources ConfigMap (ADR-073).
+# east-west (PAYMENT_URL), asks Bravo Dispatch's intake to kick off a real shipment cross-team east-west
+# (DISPATCH_URL, ADR-101 — the CNP pair that allows this hop is materialized by the ServiceGrant Composition,
+# not hand-authored here), persists to the self-service DynamoDB table (ORDERS_TABLE) and emits an
+# order-placed event to the self-service SQS queue (EVENTS_QUEUE_URL) — all from the orders-resources
+# ConfigMap (ADR-073) except DISPATCH_URL, which is a cross-team dependency, not a self-service resource.
 # AWS creds via Pod Identity on the app-alpha-orders SA; AWS_REGION explicit (IMDS blocked).
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -71,6 +74,12 @@ spec:
               value: us-east-1
             - name: PAYMENT_URL
               value: http://payment
+            - name: DISPATCH_URL
+              # Hardcoded to the dev-stage bravo-dispatch namespace on purpose: the ServiceGrant + spec.dependencies
+              # backing this call are dev-stage-only (ADR-101 v1 scope, no per-stage overlay yet). If this
+              # ever grows a staging/prod overlay, this value needs to become stage-specific (or removed) —
+              # otherwise it points at a namespace the CNP wouldn't even admit traffic to.
+              value: http://intake.bravo-dispatch-dev
             - name: OTEL_SERVICE_NAME
               value: shop-orders
             - name: OTEL_RESOURCE_ATTRIBUTES
