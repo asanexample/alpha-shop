@@ -18,8 +18,12 @@ spec:
 ---
 # Metric gate (ADR-056 W8c): background analysis over the canary. Queries the hub Mimir for the storefront's
 # HTTP success rate and auto-rolls-back if it drops below 95%. Prometheus provider (a job image would be denied
-# by Kyverno's team-ECR restriction). Fails SAFE on no data (len(result)==0 passes) — same as prod, so a deploy
-# is never blocked spuriously before the storefront emits request metrics.
+# by Kyverno's team-ECR restriction). Fails SAFE on no data (len(result)==0 passes).
+#
+# NOTE the metric shape: the storefront's OTel SDK metrics reach Mimir via the OTLP ingest spoke, which keeps
+# the raw OTLP name (`http_server_request_duration`, NO `_seconds` suffix) and maps service.namespace/service.name
+# to the `job` label (`alpha-shop/shop-storefront`) — NOT `http_server_request_duration_seconds` /
+# `k8s_namespace_name` (the Beyla/remote-write convention). So this gate queries by `job`, not the namespace arg.
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
@@ -35,6 +39,6 @@ spec:
         prometheus:
           address: https://preprod-mimir.aws.refplat.org/prometheus
           query: |
-            sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}",http_response_status_code!~"5.."}[2m]))
-            / sum(rate(http_server_request_duration_seconds_count{k8s_namespace_name="{{args.namespace}}"}[2m]))
+            sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*",http_response_status_code!~"5.."}[2m]))
+            / sum(rate(http_server_request_duration_count{job="alpha-shop/shop-storefront",instance=~"{{args.namespace}}.*"}[2m]))
       successCondition: "len(result) == 0 || result[0] >= 0.95"
