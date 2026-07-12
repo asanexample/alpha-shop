@@ -7,9 +7,7 @@ kind: Kustomization
 resources:
   - ../../base
   - progressive.yaml # storefront canary Service + metric-gate AnalysisTemplate (ADR-056 demo)
-  # hpa.yaml (ADR-078 autoscaling) is temporarily removed: the per-Product ArgoCD AppProject whitelist
-  # doesn't yet permit HorizontalPodAutoscaler, so it fails the (atomic) sync and blocks the canary too.
-  # Re-add once platform#1342 (permit HPA in the AppProject) is applied.
+  - hpa.yaml # storefront CPU HPA (ADR-078 autoscaling); AppProject permits HPA since platform#1342 (applied)
 replicas:
   # storefront runs 2 so the canary has a real stable+canary split (and to satisfy the drain floor).
   - name: storefront
