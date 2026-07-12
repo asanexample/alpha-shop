@@ -3,6 +3,11 @@
 # pod-to-pod is Cilium identity-matched (the broad 0.0.0.0/0 egress used for AWS does NOT cover pods), so these
 # specific allows are required. DNS to CoreDNS resolves the Service names. Each callee enforces the SPIRE
 # mutual-auth ingress half (cart/orders/catalog cnp-ingress-from-storefront.yaml).
+#
+# Plus a CROSS-namespace hop to the platform flagship service (ADR-099): the in-process flagd syncer polls
+# GET /sync/alpha/shop/dev on flagship-server:8080 in the platform-flagship-dev namespace. Same identity-match
+# rule — the namespace MUST be named (a bare app: label defaults to this namespace). flagship admits us via its
+# allow-sync-from-shop ingress CNP.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -32,6 +37,14 @@ spec:
             app: cart
         - matchLabels:
             app: orders
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: platform-flagship-dev
+            app: flagship-server
       toPorts:
         - ports:
             - port: "8080"
