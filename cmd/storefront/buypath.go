@@ -9,7 +9,6 @@ import (
 	"net/url"
 
 	"github.com/asanexample/alpha-shop/internal/flags"
-	"github.com/asanexample/alpha-shop/internal/telemetry"
 )
 
 // sessionHeader carries the SPA-minted cart session id. It also becomes the payment/rollout targetingKey
@@ -54,8 +53,11 @@ func (s *server) registerBuyPath(mux *http.ServeMux) {
 	})
 }
 
-// checkout builds an order from the session's cart, places it (orders→payment east-west), and clears the cart
-// on a successful order — the whole flow one connected trace.
+// checkout proxies to the checkout service (ADR-057 — extracted so it's its own mutual-auth-secured hop,
+// matching orders→payment). storefront still evaluates the checkout-experience flag (targetingKey = the
+// session, so a percentage rollout is sticky per visitor; the OpenFeature OTel hook stamps
+// feature_flag.checkout-experience.* onto this request's span) and passes the resolved value through —
+// checkout has no flags client of its own, it just orchestrates cart+orders with whatever it's told.
 func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 	sid, ok := session(w, r)
 	if !ok {
@@ -66,81 +68,9 @@ func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = json.NewDecoder(r.Body).Decode(&body) // optional (card is a demo field)
 
-	cart, err := s.fetchCart(r.Context(), sid)
-	if err != nil {
-		s.fail(w, r, "checkout: fetch cart", err)
-		return
-	}
-	if len(cart.Items) == 0 {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "your cart is empty"})
-		return
-	}
-
-	// Feature-flag the checkout experience (ADR-099). targetingKey = the session, so a percentage rollout is
-	// sticky per visitor. The OpenFeature OTel hook stamps feature_flag.checkout-experience.* onto THIS request
-	// span (r.Context()) — so the trace shows which variant a checkout ran. "express" earns free expedited
-	// handling (the orders service applies it). flagship unreachable → "standard" (fail-static).
 	experience, _ := s.flags.StringValue(r.Context(), "checkout-experience", "standard", flags.EvalContext(sid))
-	orderReq := map[string]any{"sessionId": sid, "lines": cart.Items, "card": body.Card, "experience": experience}
-	reqBody, _ := json.Marshal(orderReq)
-	raw, status, err := s.call(r.Context(), http.MethodPost, s.ordersURL+"/api/orders", bytes.NewReader(reqBody))
-	if err != nil {
-		s.fail(w, r, "checkout: place order", err)
-		return
-	}
-	if status != http.StatusOK {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(status)
-		_, _ = w.Write(raw)
-		return
-	}
-
-	var order struct {
-		ID     string `json:"id"`
-		Status string `json:"status"`
-	}
-	_ = json.Unmarshal(raw, &order)
-	if order.Status == "placed" {
-		// Empty the cart now the order is paid (best-effort; the order is already durable).
-		if _, _, err := s.call(r.Context(), http.MethodDelete, s.cartURL+"/api/cart/"+url.PathEscape(sid), nil); err != nil {
-			telemetry.Logger.ErrorContext(r.Context(), "checkout: clear cart failed (continuing)", "err", err)
-		}
-	}
-	telemetry.Logger.InfoContext(r.Context(), "checkout", "order", order.ID, "status", order.Status)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(raw)
-}
-
-// cartLine mirrors a cart line (kept local so the BFF doesn't pull the AWS-heavy cart package).
-type cartLine struct {
-	ProductID  string `json:"productId"`
-	Slug       string `json:"slug,omitempty"`
-	Name       string `json:"name"`
-	PriceCents int    `json:"priceCents"`
-	Qty        int    `json:"qty"`
-}
-
-type cartView struct {
-	Items []cartLine `json:"items"`
-}
-
-// fetchCart reads the session's cart from the cart service (the {cart:{items}} envelope).
-func (s *server) fetchCart(ctx context.Context, sid string) (cartView, error) {
-	raw, status, err := s.call(ctx, http.MethodGet, s.cartURL+"/api/cart/"+url.PathEscape(sid), nil)
-	if err != nil {
-		return cartView{}, err
-	}
-	if status != http.StatusOK {
-		return cartView{}, io.ErrUnexpectedEOF
-	}
-	var env struct {
-		Cart cartView `json:"cart"`
-	}
-	if err := json.Unmarshal(raw, &env); err != nil {
-		return cartView{}, err
-	}
-	return env.Cart, nil
+	reqBody, _ := json.Marshal(map[string]string{"sessionId": sid, "card": body.Card, "experience": experience})
+	s.proxy(w, r, http.MethodPost, s.checkoutURL+"/api/checkout", bytes.NewReader(reqBody))
 }
 
 // proxy forwards a request to an internal service and streams the response back verbatim.

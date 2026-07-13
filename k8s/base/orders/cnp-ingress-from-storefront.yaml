@@ -1,5 +1,7 @@
-# East-west ingress: orders accepts traffic ONLY from the storefront (BFF), port 8080, SPIRE mutual auth
-# required (ADR-057). Additive allow over the environment default-deny ingress.
+# East-west ingress: orders accepts traffic from the storefront (BFF, its own order-status lookup route) AND
+# checkout (places the order during the buy path), port 8080, SPIRE mutual auth required (ADR-057) for both
+# callers. Additive allow over the environment default-deny ingress. The caller halves are
+# storefront/cnp-egress-eastwest.yaml and checkout/cnp-egress-to-cart-and-orders.yaml.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -12,6 +14,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: storefront
+        - matchLabels:
+            app: checkout
       authentication:
         mode: required
       toPorts:

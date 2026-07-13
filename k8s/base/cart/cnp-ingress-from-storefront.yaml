@@ -1,6 +1,8 @@
-# East-west ingress: cart accepts traffic ONLY from the storefront (BFF), port 8080, with Cilium mutual
-# authentication REQUIRED (ADR-057 SPIRE mTLS). The environment default-denies ingress; this is the additive
-# allow. The caller half is storefront/cnp-egress-eastwest.yaml.
+# East-west ingress: cart accepts traffic from the storefront (BFF, its own cart CRUD passthrough routes) AND
+# checkout (fetches/clears the session's cart during the buy path), port 8080, with Cilium mutual
+# authentication REQUIRED (ADR-057 SPIRE mTLS) for both callers. The environment default-denies ingress; this
+# is the additive allow. The caller halves are storefront/cnp-egress-eastwest.yaml and
+# checkout/cnp-egress-to-cart-and-orders.yaml.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -13,6 +15,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: storefront
+        - matchLabels:
+            app: checkout
       authentication:
         mode: required
       toPorts:
