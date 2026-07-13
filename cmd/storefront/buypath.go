@@ -54,13 +54,17 @@ func (s *server) registerBuyPath(mux *http.ServeMux) {
 }
 
 // checkout proxies to the checkout service (ADR-057 — extracted so it's its own mutual-auth-secured hop,
-// matching orders→payment). storefront still evaluates the checkout-experience flag (targetingKey = the
-// session, so a percentage rollout is sticky per visitor; the OpenFeature OTel hook stamps
-// feature_flag.checkout-experience.* onto this request's span) and passes the resolved value through —
-// checkout has no flags client of its own, it just orchestrates cart+orders with whatever it's told.
+// matching orders→payment). Requires an account: order history (GET /api/orders) has no stable identity
+// to key on for a guest, so checkout is the point signup/login becomes mandatory rather than optional —
+// this is also where a shopped-as-guest cart gets merged into the account. storefront still evaluates the
+// checkout-experience flag (targetingKey = the user id, so a percentage rollout is sticky per account; the
+// OpenFeature OTel hook stamps feature_flag.checkout-experience.* onto this request's span) and passes the
+// resolved value through — checkout has no flags client of its own, it just orchestrates cart+orders with
+// whatever it's told.
 func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
-	sid, ok := session(w, r)
-	if !ok {
+	u, err := s.currentUser(r)
+	if err != nil {
+		writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "sign in to complete your order"})
 		return
 	}
 	var body struct {
@@ -68,8 +72,12 @@ func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = json.NewDecoder(r.Body).Decode(&body) // optional (card is a demo field)
 
-	experience, _ := s.flags.StringValue(r.Context(), "checkout-experience", "standard", flags.EvalContext(sid))
-	reqBody, _ := json.Marshal(map[string]string{"sessionId": sid, "card": body.Card, "experience": experience})
+	if anonSID := r.Header.Get(sessionHeader); anonSID != "" {
+		s.mergeAnonymousCart(r.Context(), anonSID, u.UserID)
+	}
+
+	experience, _ := s.flags.StringValue(r.Context(), "checkout-experience", "standard", flags.EvalContext(u.UserID))
+	reqBody, _ := json.Marshal(map[string]string{"sessionId": u.UserID, "card": body.Card, "experience": experience})
 	s.proxy(w, r, http.MethodPost, s.checkoutURL+"/api/checkout", bytes.NewReader(reqBody))
 }
 
