@@ -92,6 +92,7 @@ func (s *server) routes() *http.ServeMux {
 			AmountCents: total,
 			Currency:    "usd",
 			Card:        req.Card,
+			Method:      req.PaymentMethod,
 		})
 		if err != nil {
 			log.ErrorContext(r.Context(), "payment call failed", "err", err)
