@@ -1,9 +1,23 @@
 package catalog
 
-import "testing"
+import (
+	"context"
+	"testing"
+
+	"github.com/asanexample/alpha-shop/internal/awskv"
+)
+
+func newTestStore(t *testing.T) *Store {
+	t.Helper()
+	s, err := New(context.Background(), awskv.NewMemory())
+	if err != nil {
+		t.Fatalf("New: %v", err)
+	}
+	return s
+}
 
 func TestStoreSeeded(t *testing.T) {
-	s := New()
+	s := newTestStore(t)
 	if len(s.Categories()) == 0 || len(s.Brands()) == 0 {
 		t.Fatal("expected seeded categories and brands")
 	}
@@ -26,7 +40,7 @@ func TestStoreSeeded(t *testing.T) {
 }
 
 func TestFilter(t *testing.T) {
-	s := New()
+	s := newTestStore(t)
 
 	gravel := s.List(Filter{Category: "gravel"})
 	if len(gravel) == 0 {
@@ -69,8 +83,97 @@ func TestFilter(t *testing.T) {
 	}
 }
 
+func TestListPaged(t *testing.T) {
+	s := newTestStore(t)
+	all := s.List(Filter{})
+
+	// Defaults: page 1, defaultPerPage-sized (or the full set if smaller).
+	first := s.ListPaged(Filter{})
+	if first.Total != len(all) || first.Page != 1 || first.PerPage != defaultPerPage {
+		t.Fatalf("unexpected defaults: %+v (want total=%d)", first, len(all))
+	}
+	wantFirstLen := defaultPerPage
+	if wantFirstLen > len(all) {
+		wantFirstLen = len(all)
+	}
+	if len(first.Products) != wantFirstLen {
+		t.Fatalf("expected %d products on page 1, got %d", wantFirstLen, len(first.Products))
+	}
+
+	// Paging through never repeats a product and covers the whole filtered set.
+	seen := map[string]bool{}
+	for page := 1; ; page++ {
+		listing := s.ListPaged(Filter{Page: page, PerPage: 10})
+		if len(listing.Products) == 0 {
+			break
+		}
+		for _, p := range listing.Products {
+			if seen[p.ID] {
+				t.Fatalf("product %s seen on more than one page", p.ID)
+			}
+			seen[p.ID] = true
+		}
+		if page > len(all) { // safety valve against an infinite loop on a bug
+			t.Fatal("paging did not terminate")
+		}
+	}
+	if len(seen) != len(all) {
+		t.Fatalf("paged through %d products, want %d", len(seen), len(all))
+	}
+
+	// A page past the end is empty, not an error, and still reports the true total.
+	past := s.ListPaged(Filter{Page: 9999, PerPage: 10})
+	if len(past.Products) != 0 || past.Total != len(all) {
+		t.Fatalf("expected empty page past the end, got %+v", past)
+	}
+
+	// PerPage is capped.
+	capped := s.ListPaged(Filter{PerPage: 10_000})
+	if capped.PerPage != maxPerPage {
+		t.Fatalf("expected PerPage capped at %d, got %d", maxPerPage, capped.PerPage)
+	}
+}
+
+func TestNewSeedsOnceThenPersists(t *testing.T) {
+	ctx := context.Background()
+	kv := awskv.NewMemory()
+
+	first, err := New(ctx, kv)
+	if err != nil {
+		t.Fatalf("New (seed): %v", err)
+	}
+	seeded := first.List(Filter{})
+	if len(seeded) == 0 {
+		t.Fatal("expected the first New to seed products into kv")
+	}
+
+	// Simulate a second boot (e.g. a second replica, or a restart) against the same table: it must load
+	// the persisted document rather than re-seeding, and see the identical catalog.
+	if _, found, err := kv.Get(ctx, productsKey); err != nil || !found {
+		t.Fatalf("expected products document persisted in kv, found=%v err=%v", found, err)
+	}
+
+	second, err := New(ctx, kv)
+	if err != nil {
+		t.Fatalf("New (reload): %v", err)
+	}
+	if got := second.List(Filter{}); len(got) != len(seeded) {
+		t.Fatalf("second New saw %d products, want %d (same as first boot)", len(got), len(seeded))
+	}
+
+	// A third New against a distinct empty store must NOT see the first store's seeded data (no shared
+	// global state) and must independently seed its own copy.
+	third, err := New(ctx, awskv.NewMemory())
+	if err != nil {
+		t.Fatalf("New (independent seed): %v", err)
+	}
+	if got := third.List(Filter{}); len(got) != len(seeded) {
+		t.Fatalf("independently-seeded store saw %d products, want %d", len(got), len(seeded))
+	}
+}
+
 func TestProductLookupAndRelated(t *testing.T) {
-	s := New()
+	s := newTestStore(t)
 	p, ok := s.Product("salsa-warbird-c-grx")
 	if !ok {
 		t.Fatal("expected lookup by slug")

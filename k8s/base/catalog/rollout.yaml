@@ -1,6 +1,8 @@
 # catalog — internal product-catalog service. ClusterIP only, NO HTTPRoute: it is reachable only east-west
 # from the storefront BFF (enforced by the ingress CNP + SPIRE mutual auth). Serves the read API the browse
-# pages render from.
+# pages render from, backed by the self-service DynamoDB table (PRODUCTS_TABLE) from the catalog-resources
+# ConfigMap (ADR-073) — seeded from its embedded JSON on first boot. AWS creds via Pod Identity on the
+# app-alpha-catalog SA; AWS_REGION explicit (IMDS blocked).
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
@@ -29,7 +31,7 @@ spec:
         app.kubernetes.io/name: shop-catalog
         team: alpha
     spec:
-      serviceAccountName: app-alpha
+      serviceAccountName: app-alpha-catalog
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
@@ -59,11 +61,17 @@ spec:
           image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-catalog:placeholder
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: catalog-resources
+                optional: true
           env:
             - name: NAMESPACE
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: AWS_REGION
+              value: us-east-1
             - name: OTEL_SERVICE_NAME
               value: shop-catalog
             - name: OTEL_RESOURCE_ATTRIBUTES

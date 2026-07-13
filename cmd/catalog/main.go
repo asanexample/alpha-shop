@@ -1,9 +1,11 @@
 // Command catalog is the bike-shop catalog service (team alpha, product shop, service catalog).
 //
 // It is an internal, east-west-only service (ClusterIP, no HTTPRoute): the storefront BFF calls it to render
-// the browse pages. It serves a read-only JSON API over the seeded catalog and is instrumented out of the box
-// (OTel traces + Pyroscope profiles via internal/telemetry), so a storefront→catalog call shows up as one
-// connected distributed trace with per-service spans.
+// the browse pages. It serves a read-only JSON API over the catalog — backed by the self-service DynamoDB
+// table published as PRODUCTS_TABLE in the catalog-resources ConfigMap (ADR-073), seeded from its embedded
+// JSON on first boot — and is instrumented out of the box (OTel traces + Pyroscope profiles via
+// internal/telemetry), so a storefront→catalog call shows up as one connected distributed trace with
+// per-service spans.
 package main
 
 import (
@@ -17,6 +19,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/asanexample/alpha-shop/internal/awskv"
 	"github.com/asanexample/alpha-shop/internal/catalog"
 	"github.com/asanexample/alpha-shop/internal/telemetry"
 )
@@ -48,10 +51,12 @@ func newMux(store *catalog.Store) *http.ServeMux {
 			MaxPriceCents: atoiDollars(q.Get("maxPrice")),
 			OnSaleOnly:    q.Get("onSale") == "true",
 			FeaturedOnly:  q.Get("featured") == "true",
+			Page:          atoiOr(q.Get("page"), 0),
+			PerPage:       atoiOr(q.Get("perPage"), 0),
 		}
-		products := store.List(f)
-		log.InfoContext(r.Context(), "list products", "count", len(products), "category", f.Category, "brand", f.Brand, "q", f.Query)
-		writeJSON(w, http.StatusOK, map[string]any{"products": products, "count": len(products)})
+		listing := store.ListPaged(f)
+		log.InfoContext(r.Context(), "list products", "count", len(listing.Products), "total", listing.Total, "page", listing.Page, "category", f.Category, "brand", f.Brand, "q", f.Query)
+		writeJSON(w, http.StatusOK, listing)
 	})
 
 	mux.HandleFunc("GET /api/catalog/products/{idOrSlug}", func(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +79,17 @@ func main() {
 	}
 	defer func() { _ = shutdown(context.Background()) }()
 
-	store := catalog.New()
+	kv, err := awskv.Open(ctx, os.Getenv("PRODUCTS_TABLE"))
+	if err != nil {
+		telemetry.Logger.Error("kv init failed", "err", err)
+		os.Exit(1)
+	}
+	store, err := catalog.New(ctx, kv)
+	if err != nil {
+		telemetry.Logger.Error("catalog init failed", "err", err)
+		os.Exit(1)
+	}
+	telemetry.Logger.Info("catalog backend", "store", kv.Backend(), "products", len(store.List(catalog.Filter{})))
 	handler := telemetry.WrapHandler(newMux(store), "http.server")
 
 	srv := &http.Server{Addr: getenv("ADDR", ":8080"), Handler: handler, ReadTimeout: 10 * time.Second, WriteTimeout: 10 * time.Second}
@@ -111,6 +126,18 @@ func atoiDollars(s string) int {
 		return 0
 	}
 	return n * 100
+}
+
+// atoiOr parses s as an int, falling back to def on empty/invalid/negative input.
+func atoiOr(s string, def int) int {
+	if s == "" {
+		return def
+	}
+	n, err := strconv.Atoi(s)
+	if err != nil || n < 0 {
+		return def
+	}
+	return n
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {

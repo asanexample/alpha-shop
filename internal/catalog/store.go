@@ -1,14 +1,23 @@
 package catalog
 
 import (
+	"context"
+	"encoding/json"
 	"sort"
 	"strings"
+
+	"github.com/asanexample/alpha-shop/internal/awskv"
 )
 
-// Store is the in-memory catalog, seeded at construction. Read-only after New (safe for concurrent reads),
-// so no locking. A real deployment would back this with a self-service resource (ADR-073); seed data keeps
-// the demo deterministic.
+// productsKey is the single document holding the whole product list, in the same self-service
+// DynamoDB table (ADR-073) every other stateful shop service already uses via internal/awskv.
+const productsKey = "products"
+
+// Store is the catalog, loaded via kv at construction and cached in memory (read-only after New, safe
+// for concurrent reads — no locking). Categories/brands are a small, stable nav taxonomy kept as Go
+// code (config, not data); products are the shop's actual catalog data and live in kv.
 type Store struct {
+	kv         awskv.Store
 	products   []Product
 	byID       map[string]Product
 	bySlug     map[string]Product
@@ -17,10 +26,18 @@ type Store struct {
 	catBySlug  map[string]Category
 }
 
-// New returns a Store populated with the seeded bike-shop catalog.
-func New() *Store {
+// New returns a Store backed by kv. On an empty table (first boot in-cluster, or every boot against the
+// in-memory local-dev backend) it seeds the products document from the embedded JSON and persists it;
+// otherwise it loads the products already there — so a real deployment reads its catalog from Dynamo like
+// every other stateful service, instead of carrying it compiled into the binary.
+func New(ctx context.Context, kv awskv.Store) (*Store, error) {
+	products, err := loadOrSeedProducts(ctx, kv)
+	if err != nil {
+		return nil, err
+	}
 	s := &Store{
-		products:   seedProducts(),
+		kv:         kv,
+		products:   products,
 		categories: seedCategories(),
 		brands:     seedBrands(),
 		byID:       map[string]Product{},
@@ -34,7 +51,28 @@ func New() *Store {
 	for _, c := range s.categories {
 		s.catBySlug[c.Slug] = c
 	}
-	return s
+	return s, nil
+}
+
+func loadOrSeedProducts(ctx context.Context, kv awskv.Store) ([]Product, error) {
+	if doc, found, err := kv.Get(ctx, productsKey); err != nil {
+		return nil, err
+	} else if found {
+		var products []Product
+		if err := json.Unmarshal(doc, &products); err != nil {
+			return nil, err
+		}
+		return products, nil
+	}
+	products := seedProducts()
+	doc, err := json.Marshal(products)
+	if err != nil {
+		return nil, err
+	}
+	if err := kv.Put(ctx, productsKey, doc); err != nil {
+		return nil, err
+	}
+	return products, nil
 }
 
 // Categories returns all categories in nav order.
@@ -70,6 +108,37 @@ func (s *Store) List(f Filter) []Product {
 		return out[i].Name < out[j].Name
 	})
 	return out
+}
+
+// defaultPerPage/maxPerPage bound ListPaged when the caller omits or abuses PerPage.
+const (
+	defaultPerPage = 24
+	maxPerPage     = 100
+)
+
+// ListPaged is List plus pagination — the entry point for the browse/search HTTP API. Page is 1-indexed;
+// Page/PerPage <= 0 fall back to page 1 / defaultPerPage, and PerPage is capped at maxPerPage.
+func (s *Store) ListPaged(f Filter) Listing {
+	all := s.List(f)
+	page, perPage := f.Page, f.PerPage
+	if page <= 0 {
+		page = 1
+	}
+	if perPage <= 0 {
+		perPage = defaultPerPage
+	}
+	if perPage > maxPerPage {
+		perPage = maxPerPage
+	}
+	start := (page - 1) * perPage
+	if start >= len(all) {
+		return Listing{Products: []Product{}, Total: len(all), Page: page, PerPage: perPage}
+	}
+	end := start + perPage
+	if end > len(all) {
+		end = len(all)
+	}
+	return Listing{Products: all[start:end], Total: len(all), Page: page, PerPage: perPage}
 }
 
 // Related returns up to n other in-stock products in the same category (for the product-detail page).

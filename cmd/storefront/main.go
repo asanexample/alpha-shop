@@ -74,18 +74,19 @@ func (s *server) routes() *http.ServeMux {
 			s.fail(w, r, "home categories", err)
 			return
 		}
-		writeJSON(w, http.StatusOK, map[string]any{"featured": featured, "categories": cats})
+		writeJSON(w, http.StatusOK, map[string]any{"featured": featured.Products, "categories": cats})
 	})
 
-	// Product listing / search — proxies the catalog filter query straight through.
+	// Product listing / search — proxies the catalog filter (+ page/perPage) query straight through and
+	// forwards the paginated listing as-is (products/total/page/perPage) for the SPA's pager.
 	mux.HandleFunc("GET /api/products", func(w http.ResponseWriter, r *http.Request) {
-		products, err := s.catalog.Products(r.Context(), r.URL.Query())
+		listing, err := s.catalog.Products(r.Context(), r.URL.Query())
 		if err != nil {
 			s.fail(w, r, "products", err)
 			return
 		}
-		log.InfoContext(r.Context(), "storefront listing", "count", len(products))
-		writeJSON(w, http.StatusOK, map[string]any{"products": products, "count": len(products)})
+		log.InfoContext(r.Context(), "storefront listing", "count", len(listing.Products), "total", listing.Total, "page", listing.Page)
+		writeJSON(w, http.StatusOK, listing)
 	})
 
 	// Product detail + related.

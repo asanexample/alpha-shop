@@ -37,12 +37,11 @@ func (c *Client) Brands(ctx context.Context) ([]catalog.Brand, error) {
 	return out, c.get(ctx, "/api/catalog/brands", nil, &out)
 }
 
-// Products returns the products matching the given query params (category, brand, kind, q, minPrice, …).
-func (c *Client) Products(ctx context.Context, q url.Values) ([]catalog.Product, error) {
-	var out struct {
-		Products []catalog.Product `json:"products"`
-	}
-	return out.Products, c.get(ctx, "/api/catalog/products", q, &out)
+// Products returns a page of products matching the given query params (category, brand, kind, q,
+// minPrice, page, perPage, …).
+func (c *Client) Products(ctx context.Context, q url.Values) (catalog.Listing, error) {
+	var out catalog.Listing
+	return out, c.get(ctx, "/api/catalog/products", q, &out)
 }
 
 // ProductDetail is a product plus its related items.

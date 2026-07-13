@@ -43,7 +43,7 @@ type Product struct {
 	PriceCents     int               `json:"priceCents"`
 	SalePriceCents int               `json:"salePriceCents,omitempty"`
 	Summary        string            `json:"summary"`
-	Description     string           `json:"description"`
+	Description    string            `json:"description"`
 	Image          string            `json:"image"` // relative asset path served by the storefront
 	Sizes          []string          `json:"sizes,omitempty"`
 	Specs          map[string]string `json:"specs,omitempty"`
@@ -64,4 +64,16 @@ type Filter struct {
 	MaxPriceCents int
 	OnSaleOnly    bool
 	FeaturedOnly  bool
+	// Page/PerPage page a List() result (both optional, 1-indexed) — only ListPaged looks at these; List
+	// itself always returns the full filtered set, so internal callers like Related don't paginate.
+	Page    int
+	PerPage int
+}
+
+// Listing is a page of products plus enough metadata for a pager UI.
+type Listing struct {
+	Products []Product `json:"products"`
+	Total    int       `json:"total"`
+	Page     int       `json:"page"`
+	PerPage  int       `json:"perPage"`
 }
