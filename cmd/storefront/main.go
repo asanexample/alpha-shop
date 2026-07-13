@@ -29,9 +29,10 @@ type server struct {
 	catalog *catalogclient.Client
 	// Buy-path upstreams, called east-west (trace-propagating http client). The cart/orders services are
 	// internal; the BFF is the only edge-facing surface, so it proxies/orchestrates them for the SPA.
-	httpc     *http.Client
-	cartURL   string
-	ordersURL string
+	httpc       *http.Client
+	cartURL     string
+	ordersURL   string
+	checkoutURL string
 	// Feature flags (ADR-099): evaluated in-process (flagd resolver) against flagship's sync source; the OTel
 	// hook stamps feature_flag.* onto the checkout span.
 	flags *openfeature.Client
@@ -137,11 +138,12 @@ func main() {
 		flagClient = openfeature.NewClient("alpha-shop")
 	}
 	srv := &server{
-		catalog:   catalogclient.New(catalogURL),
-		httpc:     telemetry.Client(),
-		cartURL:   getenv("CART_URL", "http://cart"),
-		ordersURL: getenv("ORDERS_URL", "http://orders"),
-		flags:     flagClient,
+		catalog:     catalogclient.New(catalogURL),
+		httpc:       telemetry.Client(),
+		cartURL:     getenv("CART_URL", "http://cart"),
+		ordersURL:   getenv("ORDERS_URL", "http://orders"),
+		checkoutURL: getenv("CHECKOUT_URL", "http://checkout"),
+		flags:       flagClient,
 	}
 	handler := telemetry.WrapHandler(srv.routes(), "http.server")
 

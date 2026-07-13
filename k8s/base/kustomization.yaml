@@ -4,9 +4,10 @@
 # fail-safe placeholder. Per-stage overlays carry each service's image digest + any real stage deltas.
 #
 # One Product, MANY services (ADR-067): storefront (edge: SPA + BFF) + the internal, east-west-only services
-# catalog (browse), cart, orders, payment (buy path). The Release records one digest per service; the
-# ApplicationSet injects one image override per service. East-west is SPIRE-mTLS (ADR-057): each internal
-# callee has an authentication:required ingress CNP, and each caller a matching egress CNP.
+# catalog (browse), cart, orders, payment, checkout (buy path — checkout orchestrates cart+orders, extracted
+# from storefront's own buypath.go). The Release records one digest per service; the ApplicationSet injects
+# one image override per service. East-west is SPIRE-mTLS (ADR-057): each internal callee has an
+# authentication:required ingress CNP, and each caller a matching egress CNP.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -35,6 +36,11 @@ resources:
   - payment/rollout.yaml
   - payment/service.yaml
   - payment/cnp-ingress-from-orders.yaml
+  # checkout — internal (buy path orchestrator; calls cart + orders)
+  - checkout/rollout.yaml
+  - checkout/service.yaml
+  - checkout/cnp-ingress-from-storefront.yaml
+  - checkout/cnp-egress-to-cart-and-orders.yaml
   # shared observability egress (all services)
   - netpol-egress-otel.yaml
   - netpol-egress-pyroscope.yaml

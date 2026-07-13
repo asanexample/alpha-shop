@@ -1,8 +1,10 @@
-# East-west egress from the storefront BFF to the internal services it aggregates: catalog (browse), cart, and
-# orders (buy path). Same namespace, port 8080. The environment default-denies egress and in-cluster
-# pod-to-pod is Cilium identity-matched (the broad 0.0.0.0/0 egress used for AWS does NOT cover pods), so these
-# specific allows are required. DNS to CoreDNS resolves the Service names. Each callee enforces the SPIRE
-# mutual-auth ingress half (cart/orders/catalog cnp-ingress-from-storefront.yaml).
+# East-west egress from the storefront BFF to the internal services it aggregates: catalog (browse), cart and
+# orders (their own CRUD/lookup passthrough routes), and checkout (the buy-path orchestrator, ADR-057 — cart/
+# orders are still called directly here for storefront's own routes, not as part of checkout). Same namespace,
+# port 8080. The environment default-denies egress and in-cluster pod-to-pod is Cilium identity-matched (the
+# broad 0.0.0.0/0 egress used for AWS does NOT cover pods), so these specific allows are required. DNS to
+# CoreDNS resolves the Service names. Each callee enforces the SPIRE mutual-auth ingress half
+# (cart/orders/catalog/checkout cnp-ingress-from-storefront.yaml).
 #
 # Plus a CROSS-namespace hop to the platform flagship service (ADR-099): the in-process flagd syncer polls
 # GET /sync/alpha/shop/dev on flagship-server:8080 in the platform-flagship-dev namespace. Same identity-match
@@ -37,6 +39,8 @@ spec:
             app: cart
         - matchLabels:
             app: orders
+        - matchLabels:
+            app: checkout
       toPorts:
         - ports:
             - port: "8080"

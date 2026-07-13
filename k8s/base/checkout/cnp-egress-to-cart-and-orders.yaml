@@ -1,0 +1,36 @@
+# East-west egress: checkout -> cart (fetch/clear the session's cart) and checkout -> orders (place the
+# order), both same namespace, port 8080, plus DNS to resolve their Service names. The environment
+# default-denies egress; in-cluster pod-to-pod is Cilium identity-matched, so this specific allow is
+# required. The callee halves + SPIRE mutual auth are cart/cnp-ingress-from-storefront.yaml and
+# orders/cnp-ingress-from-storefront.yaml (both also allow app: checkout, alongside storefront).
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-checkout-egress-to-cart-and-orders
+spec:
+  endpointSelector:
+    matchLabels:
+      app: checkout
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEndpoints:
+        - matchLabels:
+            app: cart
+        - matchLabels:
+            app: orders
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

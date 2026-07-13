@@ -1,0 +1,112 @@
+# checkout — internal checkout-orchestration service (ClusterIP, no HTTPRoute). Extracted from storefront's
+# buypath.go (ADR-057): fetches the session's cart (CART_URL), places the order (ORDERS_URL — which in turn
+# authorizes payment and may kick off a Bravo Dispatch shipment), clears the cart on success. Stateless (no
+# self-service AWS resources of its own) — shares the app-alpha SA. AWS_REGION/PYROSCOPE not needed for AWS
+# access here, but kept for parity with the other internal services' profiling wiring.
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: checkout
+  labels:
+    app: checkout
+    app.kubernetes.io/name: shop-checkout
+    team: alpha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: checkout
+  strategy:
+    canary:
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
+      labels:
+        app: checkout
+        app.kubernetes.io/name: shop-checkout
+        team: alpha
+    spec:
+      serviceAccountName: app-alpha
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: checkout
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: checkout
+      containers:
+        - name: checkout
+          image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-checkout:placeholder
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AWS_REGION
+              value: us-east-1
+            - name: CART_URL
+              value: http://cart
+            - name: ORDERS_URL
+              value: http://orders
+            - name: OTEL_SERVICE_NAME
+              value: shop-checkout
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
