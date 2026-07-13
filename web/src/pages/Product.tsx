@@ -58,11 +58,19 @@ export function ProductDetail() {
   const cat = category(product.category);
   const sizes = product.sizes ?? [];
 
+  const sizeRequired = sizes.length > 0;
+  const canAdd = product.inStock && (!sizeRequired || size != null);
+
   function handleAdd() {
+    if (!canAdd) return;
+    // A size isn't a separate SKU in the catalog (one product id, several available sizes) — so a
+    // different size of the same product needs its own cart line, not a merged quantity on whichever
+    // size was added first. The cart merges/keys purely on productId, so fold the size into it here
+    // (opaque to cart/orders — they never parse it) rather than requiring a backend/model change.
     addItem({
-      productId: product.id,
+      productId: size ? `${product.id}::${size}` : product.id,
       slug: product.slug,
-      name: product.name,
+      name: size ? `${product.name} — Size ${size}` : product.name,
       priceCents: sale ? (product.salePriceCents as number) : product.priceCents,
     });
   }
@@ -131,11 +139,17 @@ export function ProductDetail() {
             <button
               type="button"
               className={`btn btn--lg ${styles.add}`}
-              disabled={!product.inStock || isAdding}
+              disabled={!canAdd || isAdding}
+              aria-describedby={sizeRequired ? "size-hint" : undefined}
               onClick={handleAdd}
             >
-              {product.inStock ? (isAdding ? "Adding…" : "Add to cart") : "Sold out"}
+              {!product.inStock ? "Sold out" : isAdding ? "Adding…" : "Add to cart"}
             </button>
+            {product.inStock && sizeRequired && size == null ? (
+              <p id="size-hint" className={styles.sizeHint}>
+                Select a size to add to cart.
+              </p>
+            ) : null}
           </div>
 
           {product.specs && Object.keys(product.specs).length > 0 ? (

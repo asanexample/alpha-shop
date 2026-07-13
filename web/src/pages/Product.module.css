@@ -161,6 +161,12 @@
   flex: 1;
   min-width: 220px;
 }
+.sizeHint {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
 
 /* specs table */
 .specs {
