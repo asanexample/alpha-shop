@@ -51,3 +51,43 @@ func TestCartLifecycle(t *testing.T) {
 		t.Fatalf("cart not cleared: %+v", c)
 	}
 }
+
+func TestSetQty(t *testing.T) {
+	ctx := context.Background()
+	s := New(awskv.NewMemory())
+	sid := "sess-2"
+
+	if _, err := s.Add(ctx, sid, Item{ProductID: "p1", Name: "Warbird", PriceCents: 399900, Qty: 1}); err != nil {
+		t.Fatal(err)
+	}
+
+	// Set replaces, doesn't add — unlike Add's merge behavior.
+	c, err := s.SetQty(ctx, sid, "p1", 5)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Items) != 1 || c.Items[0].Qty != 5 {
+		t.Fatalf("expected qty 5, got %+v", c.Items)
+	}
+
+	// qty <= 0 removes the line, same as Remove.
+	c, err = s.SetQty(ctx, sid, "p1", 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Items) != 0 {
+		t.Fatalf("expected line removed, got %+v", c.Items)
+	}
+
+	// Unknown product id is a no-op, not an error.
+	if _, err := s.Add(ctx, sid, Item{ProductID: "p2", Name: "Lock", PriceCents: 8999, Qty: 1}); err != nil {
+		t.Fatal(err)
+	}
+	c, err = s.SetQty(ctx, sid, "not-a-real-product", 3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(c.Items) != 1 || c.Items[0].ProductID != "p2" || c.Items[0].Qty != 1 {
+		t.Fatalf("unknown product id should be a no-op, got %+v", c.Items)
+	}
+}
