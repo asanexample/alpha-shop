@@ -1,0 +1,2558 @@
+[
+  {
+    "id": "p-1100",
+    "slug": "salsa-warbird-c-grx",
+    "name": "Warbird C GRX 810",
+    "brand": "salsa",
+    "category": "gravel",
+    "priceCents": 399900,
+    "summary": "Carbon gravel race bike built for the long haul.",
+    "featured": true,
+    "description": "The Warbird is Salsa's dedicated gravel racer \u2014 Class 5 VRS compliance to smooth the chatter, room for 45mm tires, and multiple bottle mounts for all-day epics.",
+    "sizes": [
+      "52.5",
+      "55",
+      "57.5"
+    ],
+    "inStock": true,
+    "specs": {
+      "Frame": "Carbon w/ Class 5 VRS",
+      "Groupset": "Shimano GRX 810",
+      "Tire clearance": "45mm 700c"
+    }
+  },
+  {
+    "id": "p-1000",
+    "slug": "all-city-synapse-carbon",
+    "name": "Synapse Carbon",
+    "brand": "all-city",
+    "category": "road",
+    "priceCents": 180000,
+    "summary": "Synapse Carbon from All City \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Synapse Carbon is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Groupset": "Shimano 105 Di2"
+    }
+  },
+  {
+    "id": "p-1001",
+    "slug": "cannondale-allez-sprint-comp",
+    "name": "Allez Sprint Comp",
+    "brand": "cannondale",
+    "category": "road",
+    "priceCents": 222700,
+    "summary": "Allez Sprint Comp from Cannondale \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Allez Sprint Comp is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 193700,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Groupset": "SRAM Rival eTap AXS"
+    }
+  },
+  {
+    "id": "p-1002",
+    "slug": "kona-zig-zag",
+    "name": "Zig Zag",
+    "brand": "kona",
+    "category": "road",
+    "priceCents": 265500,
+    "summary": "Zig Zag from Kona \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Zig Zag is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Groupset": "Shimano Ultegra"
+    }
+  },
+  {
+    "id": "p-1003",
+    "slug": "marin-domane-sl",
+    "name": "Domane SL",
+    "brand": "marin",
+    "category": "road",
+    "priceCents": 308200,
+    "summary": "Domane SL from Marin \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Domane SL is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Groupset": "Shimano 105 Di2"
+    }
+  },
+  {
+    "id": "p-1004",
+    "slug": "salsa-defy-advanced",
+    "name": "Defy Advanced",
+    "brand": "salsa",
+    "category": "road",
+    "priceCents": 350900,
+    "summary": "Defy Advanced from Salsa \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Defy Advanced is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Groupset": "SRAM Rival eTap AXS"
+    }
+  },
+  {
+    "id": "p-1005",
+    "slug": "specialized-emonda-slr",
+    "name": "Emonda SLR",
+    "brand": "specialized",
+    "category": "road",
+    "priceCents": 393600,
+    "summary": "Emonda SLR from Specialized \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Emonda SLR is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 342400,
+    "featured": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Groupset": "Shimano Ultegra"
+    }
+  },
+  {
+    "id": "p-1006",
+    "slug": "surly-tarmac-sl8",
+    "name": "Tarmac SL8",
+    "brand": "surly",
+    "category": "road",
+    "priceCents": 436400,
+    "summary": "Tarmac SL8 from Surly \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Tarmac SL8 is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Groupset": "Shimano 105 Di2"
+    }
+  },
+  {
+    "id": "p-1007",
+    "slug": "giant-caad13-disc",
+    "name": "CAAD13 Disc",
+    "brand": "giant",
+    "category": "road",
+    "priceCents": 479100,
+    "summary": "CAAD13 Disc from Giant \u2014 a road favorite at Alpha Bikes.",
+    "description": "The CAAD13 Disc is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Groupset": "SRAM Rival eTap AXS"
+    }
+  },
+  {
+    "id": "p-1008",
+    "slug": "trek-aeroad-cfr",
+    "name": "Aeroad CFR",
+    "brand": "trek",
+    "category": "road",
+    "priceCents": 521800,
+    "summary": "Aeroad CFR from Trek \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Aeroad CFR is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Groupset": "Shimano Ultegra"
+    }
+  },
+  {
+    "id": "p-1009",
+    "slug": "yeti-addict-rc",
+    "name": "Addict RC",
+    "brand": "yeti",
+    "category": "road",
+    "priceCents": 564500,
+    "summary": "Addict RC from Yeti \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Addict RC is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 491100,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Groupset": "Shimano 105 Di2"
+    }
+  },
+  {
+    "id": "p-1010",
+    "slug": "all-city-supersix-evo",
+    "name": "SuperSix EVO",
+    "brand": "all-city",
+    "category": "road",
+    "priceCents": 607300,
+    "summary": "SuperSix EVO from All City \u2014 a road favorite at Alpha Bikes.",
+    "description": "The SuperSix EVO is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Groupset": "SRAM Rival eTap AXS"
+    }
+  },
+  {
+    "id": "p-1011",
+    "slug": "cannondale-propel-advanced",
+    "name": "Propel Advanced",
+    "brand": "cannondale",
+    "category": "road",
+    "priceCents": 650000,
+    "summary": "Propel Advanced from Cannondale \u2014 a road favorite at Alpha Bikes.",
+    "description": "The Propel Advanced is one of Alpha Bikes' most-recommended road picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "54",
+      "56",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Groupset": "Shimano Ultegra"
+    }
+  },
+  {
+    "id": "p-1101",
+    "slug": "cannondale-midnight-special",
+    "name": "Midnight Special",
+    "brand": "cannondale",
+    "category": "gravel",
+    "priceCents": 227300,
+    "summary": "Midnight Special from Cannondale \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Midnight Special is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 197800,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Tire clearance": "45mm"
+    }
+  },
+  {
+    "id": "p-1102",
+    "slug": "kona-libre",
+    "name": "Libre",
+    "brand": "kona",
+    "category": "gravel",
+    "priceCents": 254500,
+    "summary": "Libre from Kona \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Libre is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Tire clearance": "50mm"
+    }
+  },
+  {
+    "id": "p-1103",
+    "slug": "marin-checkpoint-sl",
+    "name": "Checkpoint SL",
+    "brand": "marin",
+    "category": "gravel",
+    "priceCents": 281800,
+    "summary": "Checkpoint SL from Marin \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Checkpoint SL is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Tire clearance": "40mm"
+    }
+  },
+  {
+    "id": "p-1104",
+    "slug": "salsa-grail-cf-sl",
+    "name": "Grail CF SL",
+    "brand": "salsa",
+    "category": "gravel",
+    "priceCents": 309100,
+    "summary": "Grail CF SL from Salsa \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Grail CF SL is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Tire clearance": "45mm"
+    }
+  },
+  {
+    "id": "p-1105",
+    "slug": "specialized-crux-dsw",
+    "name": "Crux DSW",
+    "brand": "specialized",
+    "category": "gravel",
+    "priceCents": 336400,
+    "summary": "Crux DSW from Specialized \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Crux DSW is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 292700,
+    "featured": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Tire clearance": "50mm"
+    }
+  },
+  {
+    "id": "p-1106",
+    "slug": "surly-cutthroat-grx",
+    "name": "Cutthroat GRX",
+    "brand": "surly",
+    "category": "gravel",
+    "priceCents": 363600,
+    "summary": "Cutthroat GRX from Surly \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Cutthroat GRX is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Tire clearance": "40mm"
+    }
+  },
+  {
+    "id": "p-1107",
+    "slug": "giant-topstone-carbon",
+    "name": "Topstone Carbon",
+    "brand": "giant",
+    "category": "gravel",
+    "priceCents": 390900,
+    "summary": "Topstone Carbon from Giant \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Topstone Carbon is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Tire clearance": "45mm"
+    }
+  },
+  {
+    "id": "p-1108",
+    "slug": "trek-sequoia-elite",
+    "name": "Sequoia Elite",
+    "brand": "trek",
+    "category": "gravel",
+    "priceCents": 418200,
+    "summary": "Sequoia Elite from Trek \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Sequoia Elite is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Tire clearance": "50mm"
+    }
+  },
+  {
+    "id": "p-1109",
+    "slug": "yeti-diverge-comp",
+    "name": "Diverge Comp",
+    "brand": "yeti",
+    "category": "gravel",
+    "priceCents": 445500,
+    "summary": "Diverge Comp from Yeti \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Diverge Comp is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 387600,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Carbon",
+      "Tire clearance": "40mm"
+    }
+  },
+  {
+    "id": "p-1110",
+    "slug": "all-city-revolt-advanced",
+    "name": "Revolt Advanced",
+    "brand": "all-city",
+    "category": "gravel",
+    "priceCents": 472700,
+    "summary": "Revolt Advanced from All City \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The Revolt Advanced is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Steel",
+      "Tire clearance": "45mm"
+    }
+  },
+  {
+    "id": "p-1111",
+    "slug": "cannondale-arc8-gravel",
+    "name": "ARC8 Gravel",
+    "brand": "cannondale",
+    "category": "gravel",
+    "priceCents": 500000,
+    "summary": "ARC8 Gravel from Cannondale \u2014 a gravel favorite at Alpha Bikes.",
+    "description": "The ARC8 Gravel is one of Alpha Bikes' most-recommended gravel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "49",
+      "52",
+      "55",
+      "58"
+    ],
+    "specs": {
+      "Frame": "Alloy",
+      "Tire clearance": "50mm"
+    }
+  },
+  {
+    "id": "p-1200",
+    "slug": "all-city-process-134-cr-dl",
+    "name": "Process 134 CR/DL",
+    "brand": "all-city",
+    "category": "mountain",
+    "priceCents": 150000,
+    "summary": "Process 134 CR/DL from All City \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Process 134 CR/DL is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "120mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1201",
+    "slug": "cannondale-rift-zone-2",
+    "name": "Rift Zone 2",
+    "brand": "cannondale",
+    "category": "mountain",
+    "priceCents": 204500,
+    "summary": "Rift Zone 2 from Cannondale \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Rift Zone 2 is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 177900,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "130mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1202",
+    "slug": "kona-rockhopper-comp",
+    "name": "Rockhopper Comp",
+    "brand": "kona",
+    "category": "mountain",
+    "priceCents": 259100,
+    "summary": "Rockhopper Comp from Kona \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Rockhopper Comp is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "140mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1203",
+    "slug": "marin-stumpjumper-comp",
+    "name": "Stumpjumper Comp",
+    "brand": "marin",
+    "category": "mountain",
+    "priceCents": 313600,
+    "summary": "Stumpjumper Comp from Marin \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Stumpjumper Comp is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "150mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1204",
+    "slug": "salsa-trance-x-29",
+    "name": "Trance X 29",
+    "brand": "salsa",
+    "category": "mountain",
+    "priceCents": 368200,
+    "summary": "Trance X 29 from Salsa \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Trance X 29 is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "120mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1205",
+    "slug": "specialized-fuel-ex-8",
+    "name": "Fuel EX 8",
+    "brand": "specialized",
+    "category": "mountain",
+    "priceCents": 422700,
+    "summary": "Fuel EX 8 from Specialized \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Fuel EX 8 is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 367700,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "130mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1206",
+    "slug": "surly-spectral-125",
+    "name": "Spectral 125",
+    "brand": "surly",
+    "category": "mountain",
+    "priceCents": 477300,
+    "summary": "Spectral 125 from Surly \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Spectral 125 is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "140mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1207",
+    "slug": "giant-habit-lt",
+    "name": "Habit LT",
+    "brand": "giant",
+    "category": "mountain",
+    "priceCents": 531800,
+    "summary": "Habit LT from Giant \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Habit LT is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "150mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1208",
+    "slug": "trek-sb130-lunch-ride",
+    "name": "SB130 Lunch Ride",
+    "brand": "trek",
+    "category": "mountain",
+    "priceCents": 586400,
+    "summary": "SB130 Lunch Ride from Trek \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The SB130 Lunch Ride is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "120mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1209",
+    "slug": "yeti-optic-c-r",
+    "name": "Optic C R",
+    "brand": "yeti",
+    "category": "mountain",
+    "priceCents": 640900,
+    "summary": "Optic C R from Yeti \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Optic C R is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 557600,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "130mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1210",
+    "slug": "all-city-trance-x-advanced",
+    "name": "Trance X Advanced",
+    "brand": "all-city",
+    "category": "mountain",
+    "priceCents": 695500,
+    "summary": "Trance X Advanced from All City \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Trance X Advanced is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "140mm",
+      "Wheels": "29\""
+    }
+  },
+  {
+    "id": "p-1211",
+    "slug": "cannondale-tallboy-cc",
+    "name": "Tallboy CC",
+    "brand": "cannondale",
+    "category": "mountain",
+    "priceCents": 750000,
+    "summary": "Tallboy CC from Cannondale \u2014 a mountain favorite at Alpha Bikes.",
+    "description": "The Tallboy CC is one of Alpha Bikes' most-recommended mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Travel": "150mm",
+      "Wheels": "27.5\""
+    }
+  },
+  {
+    "id": "p-1300",
+    "slug": "all-city-fairfax-1",
+    "name": "Fairfax 1",
+    "brand": "all-city",
+    "category": "commuter",
+    "priceCents": 40000,
+    "summary": "Fairfax 1 from All City \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Fairfax 1 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 2x8",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1301",
+    "slug": "cannondale-cross-check",
+    "name": "Cross-Check",
+    "brand": "cannondale",
+    "category": "commuter",
+    "priceCents": 56400,
+    "summary": "Cross-Check from Cannondale \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Cross-Check is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 49100,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 1x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1302",
+    "slug": "kona-fx-3-disc",
+    "name": "FX 3 Disc",
+    "brand": "kona",
+    "category": "commuter",
+    "priceCents": 72700,
+    "summary": "FX 3 Disc from Kona \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The FX 3 Disc is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Microshift 2x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1303",
+    "slug": "marin-sirrus-x-4-0",
+    "name": "Sirrus X 4.0",
+    "brand": "marin",
+    "category": "commuter",
+    "priceCents": 89100,
+    "summary": "Sirrus X 4.0 from Marin \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Sirrus X 4.0 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 2x8",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1304",
+    "slug": "salsa-verve-3",
+    "name": "Verve 3",
+    "brand": "salsa",
+    "category": "commuter",
+    "priceCents": 105500,
+    "summary": "Verve 3 from Salsa \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Verve 3 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 1x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1305",
+    "slug": "specialized-district-1",
+    "name": "District 1",
+    "brand": "specialized",
+    "category": "commuter",
+    "priceCents": 121800,
+    "summary": "District 1 from Specialized \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The District 1 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 106000,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Microshift 2x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1306",
+    "slug": "surly-metrotown",
+    "name": "Metrotown",
+    "brand": "surly",
+    "category": "commuter",
+    "priceCents": 138200,
+    "summary": "Metrotown from Surly \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Metrotown is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 2x8",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1307",
+    "slug": "giant-roll-2-0",
+    "name": "Roll 2.0",
+    "brand": "giant",
+    "category": "commuter",
+    "priceCents": 154500,
+    "summary": "Roll 2.0 from Giant \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Roll 2.0 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 1x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1308",
+    "slug": "trek-loft-1",
+    "name": "Loft 1",
+    "brand": "trek",
+    "category": "commuter",
+    "priceCents": 170900,
+    "summary": "Loft 1 from Trek \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Loft 1 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Microshift 2x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1309",
+    "slug": "yeti-escape-air",
+    "name": "Escape Air",
+    "brand": "yeti",
+    "category": "commuter",
+    "priceCents": 187300,
+    "summary": "Escape Air from Yeti \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Escape Air is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 163000,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 2x8",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1310",
+    "slug": "all-city-domane-al-2",
+    "name": "Domane AL 2",
+    "brand": "all-city",
+    "category": "commuter",
+    "priceCents": 203600,
+    "summary": "Domane AL 2 from All City \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The Domane AL 2 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Shimano 1x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1311",
+    "slug": "cannondale-arv-8-3",
+    "name": "ARV 8.3",
+    "brand": "cannondale",
+    "category": "commuter",
+    "priceCents": 220000,
+    "summary": "ARV 8.3 from Cannondale \u2014 a commuter favorite at Alpha Bikes.",
+    "description": "The ARV 8.3 is one of Alpha Bikes' most-recommended commuter picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Drivetrain": "Microshift 2x9",
+      "Mounts": "Rack + fender"
+    }
+  },
+  {
+    "id": "p-1400",
+    "slug": "all-city-jett-20",
+    "name": "Jett 20",
+    "brand": "all-city",
+    "category": "kids",
+    "priceCents": 25000,
+    "summary": "Jett 20 from All City \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Jett 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "16\"",
+      "Gears": "1x7"
+    }
+  },
+  {
+    "id": "p-1401",
+    "slug": "cannondale-riprock-20",
+    "name": "Riprock 20",
+    "brand": "cannondale",
+    "category": "kids",
+    "priceCents": 30000,
+    "summary": "Riprock 20 from Cannondale \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Riprock 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 26100,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "20\"",
+      "Gears": "Single-speed"
+    }
+  },
+  {
+    "id": "p-1402",
+    "slug": "kona-cadence-20",
+    "name": "Cadence 20",
+    "brand": "kona",
+    "category": "kids",
+    "priceCents": 35000,
+    "summary": "Cadence 20 from Kona \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Cadence 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "24\"",
+      "Gears": "1x7"
+    }
+  },
+  {
+    "id": "p-1403",
+    "slug": "marin-mxi-20",
+    "name": "MXi 20",
+    "brand": "marin",
+    "category": "kids",
+    "priceCents": 40000,
+    "summary": "MXi 20 from Marin \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The MXi 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "16\"",
+      "Gears": "Single-speed"
+    }
+  },
+  {
+    "id": "p-1404",
+    "slug": "salsa-woom-style-20",
+    "name": "Woom-Style 20",
+    "brand": "salsa",
+    "category": "kids",
+    "priceCents": 45000,
+    "summary": "Woom-Style 20 from Salsa \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Woom-Style 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "20\"",
+      "Gears": "1x7"
+    }
+  },
+  {
+    "id": "p-1405",
+    "slug": "specialized-rift-ryder-20",
+    "name": "Rift Ryder 20",
+    "brand": "specialized",
+    "category": "kids",
+    "priceCents": 50000,
+    "summary": "Rift Ryder 20 from Specialized \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Rift Ryder 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 43500,
+    "featured": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "24\"",
+      "Gears": "Single-speed"
+    }
+  },
+  {
+    "id": "p-1406",
+    "slug": "surly-pixie-20",
+    "name": "Pixie 20",
+    "brand": "surly",
+    "category": "kids",
+    "priceCents": 55000,
+    "summary": "Pixie 20 from Surly \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Pixie 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "16\"",
+      "Gears": "1x7"
+    }
+  },
+  {
+    "id": "p-1407",
+    "slug": "giant-trailburner-jr",
+    "name": "Trailburner Jr",
+    "brand": "giant",
+    "category": "kids",
+    "priceCents": 60000,
+    "summary": "Trailburner Jr from Giant \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Trailburner Jr is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "20\"",
+      "Gears": "Single-speed"
+    }
+  },
+  {
+    "id": "p-1408",
+    "slug": "trek-spinner-20",
+    "name": "Spinner 20",
+    "brand": "trek",
+    "category": "kids",
+    "priceCents": 65000,
+    "summary": "Spinner 20 from Trek \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Spinner 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "24\"",
+      "Gears": "1x7"
+    }
+  },
+  {
+    "id": "p-1409",
+    "slug": "yeti-cannondale-trail-kids-20",
+    "name": "Cannondale Trail Kids 20",
+    "brand": "yeti",
+    "category": "kids",
+    "priceCents": 70000,
+    "summary": "Cannondale Trail Kids 20 from Yeti \u2014 a kids favorite at Alpha Bikes.",
+    "description": "The Cannondale Trail Kids 20 is one of Alpha Bikes' most-recommended kids picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 60900,
+    "sizes": [
+      "16\"",
+      "20\"",
+      "24\""
+    ],
+    "specs": {
+      "Wheels": "16\"",
+      "Gears": "Single-speed"
+    }
+  },
+  {
+    "id": "p-1500",
+    "slug": "all-city-turbo-vado-4-0",
+    "name": "Turbo Vado 4.0",
+    "brand": "all-city",
+    "category": "ebike-city",
+    "priceCents": 220000,
+    "summary": "Turbo Vado 4.0 from All City \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Turbo Vado 4.0 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Specialized 2.2",
+      "Battery": "500Wh"
+    }
+  },
+  {
+    "id": "p-1501",
+    "slug": "cannondale-como-sl-5",
+    "name": "Como SL 5",
+    "brand": "cannondale",
+    "category": "ebike-city",
+    "priceCents": 245600,
+    "summary": "Como SL 5 from Cannondale \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Como SL 5 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 213700,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance Line",
+      "Battery": "560Wh"
+    }
+  },
+  {
+    "id": "p-1502",
+    "slug": "kona-verve-2",
+    "name": "Verve+ 2",
+    "brand": "kona",
+    "category": "ebike-city",
+    "priceCents": 271100,
+    "summary": "Verve+ 2 from Kona \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Verve+ 2 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Battery": "620Wh"
+    }
+  },
+  {
+    "id": "p-1503",
+    "slug": "marin-ride-city-500",
+    "name": "Ride City 500",
+    "brand": "marin",
+    "category": "ebike-city",
+    "priceCents": 296700,
+    "summary": "Ride City 500 from Marin \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Ride City 500 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Specialized 2.2",
+      "Battery": "680Wh"
+    }
+  },
+  {
+    "id": "p-1504",
+    "slug": "salsa-pace-500",
+    "name": "Pace 500",
+    "brand": "salsa",
+    "category": "ebike-city",
+    "priceCents": 322200,
+    "summary": "Pace 500 from Salsa \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Pace 500 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance Line",
+      "Battery": "500Wh"
+    }
+  },
+  {
+    "id": "p-1505",
+    "slug": "specialized-como-3-0",
+    "name": "Como 3.0",
+    "brand": "specialized",
+    "category": "ebike-city",
+    "priceCents": 347800,
+    "summary": "Como 3.0 from Specialized \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Como 3.0 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 302600,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Battery": "560Wh"
+    }
+  },
+  {
+    "id": "p-1506",
+    "slug": "surly-volt-pulse",
+    "name": "Volt Pulse",
+    "brand": "surly",
+    "category": "ebike-city",
+    "priceCents": 373300,
+    "summary": "Volt Pulse from Surly \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Volt Pulse is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Specialized 2.2",
+      "Battery": "620Wh"
+    }
+  },
+  {
+    "id": "p-1507",
+    "slug": "giant-loft-e",
+    "name": "Loft E+",
+    "brand": "giant",
+    "category": "ebike-city",
+    "priceCents": 398900,
+    "summary": "Loft E+ from Giant \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Loft E+ is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance Line",
+      "Battery": "680Wh"
+    }
+  },
+  {
+    "id": "p-1508",
+    "slug": "trek-metro-e1",
+    "name": "Metro E1",
+    "brand": "trek",
+    "category": "ebike-city",
+    "priceCents": 424400,
+    "summary": "Metro E1 from Trek \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The Metro E1 is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Battery": "500Wh"
+    }
+  },
+  {
+    "id": "p-1509",
+    "slug": "yeti-district-e",
+    "name": "District E",
+    "brand": "yeti",
+    "category": "ebike-city",
+    "priceCents": 450000,
+    "summary": "District E from Yeti \u2014 a ebike city favorite at Alpha Bikes.",
+    "description": "The District E is one of Alpha Bikes' most-recommended ebike city picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 391500,
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "specs": {
+      "Motor": "Specialized 2.2",
+      "Battery": "560Wh"
+    }
+  },
+  {
+    "id": "p-1550",
+    "slug": "all-city-moterra-neo-4",
+    "name": "Moterra Neo 4",
+    "brand": "all-city",
+    "category": "ebike-mountain",
+    "priceCents": 380000,
+    "summary": "Moterra Neo 4 from All City \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Moterra Neo 4 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance CX",
+      "Travel": "140mm"
+    }
+  },
+  {
+    "id": "p-1551",
+    "slug": "cannondale-levo-sl-comp",
+    "name": "Levo SL Comp",
+    "brand": "cannondale",
+    "category": "ebike-mountain",
+    "priceCents": 421100,
+    "summary": "Levo SL Comp from Cannondale \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Levo SL Comp is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 366400,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Travel": "150mm"
+    }
+  },
+  {
+    "id": "p-1552",
+    "slug": "kona-trance-x-e-2",
+    "name": "Trance X E+ 2",
+    "brand": "kona",
+    "category": "ebike-mountain",
+    "priceCents": 462200,
+    "summary": "Trance X E+ 2 from Kona \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Trance X E+ 2 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Brose Drive S",
+      "Travel": "160mm"
+    }
+  },
+  {
+    "id": "p-1553",
+    "slug": "marin-reign-e-1",
+    "name": "Reign E+ 1",
+    "brand": "marin",
+    "category": "ebike-mountain",
+    "priceCents": 503300,
+    "summary": "Reign E+ 1 from Marin \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Reign E+ 1 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance CX",
+      "Travel": "140mm"
+    }
+  },
+  {
+    "id": "p-1554",
+    "slug": "salsa-rise-1",
+    "name": "Rise 1",
+    "brand": "salsa",
+    "category": "ebike-mountain",
+    "priceCents": 544400,
+    "summary": "Rise 1 from Salsa \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Rise 1 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Travel": "150mm"
+    }
+  },
+  {
+    "id": "p-1555",
+    "slug": "specialized-kenevo-sl",
+    "name": "Kenevo SL",
+    "brand": "specialized",
+    "category": "ebike-mountain",
+    "priceCents": 585600,
+    "summary": "Kenevo SL from Specialized \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Kenevo SL is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 509500,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Brose Drive S",
+      "Travel": "160mm"
+    }
+  },
+  {
+    "id": "p-1556",
+    "slug": "surly-powerfly-5",
+    "name": "Powerfly 5",
+    "brand": "surly",
+    "category": "ebike-mountain",
+    "priceCents": 626700,
+    "summary": "Powerfly 5 from Surly \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Powerfly 5 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance CX",
+      "Travel": "140mm"
+    }
+  },
+  {
+    "id": "p-1557",
+    "slug": "giant-range-e-20",
+    "name": "Range E 20",
+    "brand": "giant",
+    "category": "ebike-mountain",
+    "priceCents": 667800,
+    "summary": "Range E 20 from Giant \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Range E 20 is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Shimano EP8",
+      "Travel": "150mm"
+    }
+  },
+  {
+    "id": "p-1558",
+    "slug": "trek-optic-e-comp",
+    "name": "Optic E Comp",
+    "brand": "trek",
+    "category": "ebike-mountain",
+    "priceCents": 708900,
+    "summary": "Optic E Comp from Trek \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Optic E Comp is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Brose Drive S",
+      "Travel": "160mm"
+    }
+  },
+  {
+    "id": "p-1559",
+    "slug": "yeti-habit-e-lt",
+    "name": "Habit E LT",
+    "brand": "yeti",
+    "category": "ebike-mountain",
+    "priceCents": 750000,
+    "summary": "Habit E LT from Yeti \u2014 a ebike mountain favorite at Alpha Bikes.",
+    "description": "The Habit E LT is one of Alpha Bikes' most-recommended ebike mountain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 652500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Motor": "Bosch Performance CX",
+      "Travel": "140mm"
+    }
+  },
+  {
+    "id": "p-2000",
+    "slug": "all-city-grx-rd-rx810-rear-derailleur",
+    "name": "GRX RD-RX810 Rear Derailleur",
+    "brand": "all-city",
+    "category": "drivetrain",
+    "priceCents": 6000,
+    "summary": "GRX RD-RX810 Rear Derailleur from All City \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The GRX RD-RX810 Rear Derailleur is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2001",
+    "slug": "cannondale-gx-eagle-xg-1275-cassette",
+    "name": "GX Eagle XG-1275 Cassette",
+    "brand": "cannondale",
+    "category": "drivetrain",
+    "priceCents": 9500,
+    "summary": "GX Eagle XG-1275 Cassette from Cannondale \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The GX Eagle XG-1275 Cassette is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 8300,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-2002",
+    "slug": "kona-xt-m8100-shifter",
+    "name": "XT M8100 Shifter",
+    "brand": "kona",
+    "category": "drivetrain",
+    "priceCents": 13100,
+    "summary": "XT M8100 Shifter from Kona \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The XT M8100 Shifter is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2003",
+    "slug": "marin-force-axs-crankset",
+    "name": "Force AXS Crankset",
+    "brand": "marin",
+    "category": "drivetrain",
+    "priceCents": 16600,
+    "summary": "Force AXS Crankset from Marin \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The Force AXS Crankset is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-2004",
+    "slug": "salsa-105-di2-front-derailleur",
+    "name": "105 Di2 Front Derailleur",
+    "brand": "salsa",
+    "category": "drivetrain",
+    "priceCents": 20200,
+    "summary": "105 Di2 Front Derailleur from Salsa \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The 105 Di2 Front Derailleur is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2005",
+    "slug": "specialized-slx-m7100-chain",
+    "name": "SLX M7100 Chain",
+    "brand": "specialized",
+    "category": "drivetrain",
+    "priceCents": 23700,
+    "summary": "SLX M7100 Chain from Specialized \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The SLX M7100 Chain is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 20600,
+    "featured": true,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-2006",
+    "slug": "surly-nx-eagle-cassette",
+    "name": "NX Eagle Cassette",
+    "brand": "surly",
+    "category": "drivetrain",
+    "priceCents": 27300,
+    "summary": "NX Eagle Cassette from Surly \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The NX Eagle Cassette is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2007",
+    "slug": "giant-ultegra-di2-shifter",
+    "name": "Ultegra Di2 Shifter",
+    "brand": "giant",
+    "category": "drivetrain",
+    "priceCents": 30800,
+    "summary": "Ultegra Di2 Shifter from Giant \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The Ultegra Di2 Shifter is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-2008",
+    "slug": "trek-deore-m6100-crankset",
+    "name": "Deore M6100 Crankset",
+    "brand": "trek",
+    "category": "drivetrain",
+    "priceCents": 34400,
+    "summary": "Deore M6100 Crankset from Trek \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The Deore M6100 Crankset is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2009",
+    "slug": "yeti-red-axs-rear-derailleur",
+    "name": "Red AXS Rear Derailleur",
+    "brand": "yeti",
+    "category": "drivetrain",
+    "priceCents": 37900,
+    "summary": "Red AXS Rear Derailleur from Yeti \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The Red AXS Rear Derailleur is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 33000,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-2010",
+    "slug": "all-city-xtr-m9100-cassette",
+    "name": "XTR M9100 Cassette",
+    "brand": "all-city",
+    "category": "drivetrain",
+    "priceCents": 41500,
+    "summary": "XTR M9100 Cassette from All City \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The XTR M9100 Cassette is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "specs": {
+      "Speeds": "11"
+    }
+  },
+  {
+    "id": "p-2011",
+    "slug": "cannondale-apex-xplr-derailleur",
+    "name": "Apex XPLR Derailleur",
+    "brand": "cannondale",
+    "category": "drivetrain",
+    "priceCents": 45000,
+    "summary": "Apex XPLR Derailleur from Cannondale \u2014 a drivetrain favorite at Alpha Bikes.",
+    "description": "The Apex XPLR Derailleur is one of Alpha Bikes' most-recommended drivetrain picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Speeds": "12"
+    }
+  },
+  {
+    "id": "p-3000",
+    "slug": "all-city-gr-1600-gravel-wheelset",
+    "name": "GR 1600 Gravel Wheelset",
+    "brand": "all-city",
+    "category": "wheelsets",
+    "priceCents": 28000,
+    "summary": "GR 1600 Gravel Wheelset from All City \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The GR 1600 Gravel Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "specs": {
+      "Size": "700c",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3001",
+    "slug": "cannondale-traverse-29-alloy-wheelset",
+    "name": "Traverse 29 Alloy Wheelset",
+    "brand": "cannondale",
+    "category": "wheelsets",
+    "priceCents": 38200,
+    "summary": "Traverse 29 Alloy Wheelset from Cannondale \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Traverse 29 Alloy Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 33200,
+    "specs": {
+      "Size": "29\"",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3002",
+    "slug": "kona-arc-1600-wheelset",
+    "name": "Arc 1600 Wheelset",
+    "brand": "kona",
+    "category": "wheelsets",
+    "priceCents": 48400,
+    "summary": "Arc 1600 Wheelset from Kona \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Arc 1600 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Size": "700c",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3003",
+    "slug": "marin-crest-carbon-wheelset",
+    "name": "Crest Carbon Wheelset",
+    "brand": "marin",
+    "category": "wheelsets",
+    "priceCents": 58700,
+    "summary": "Crest Carbon Wheelset from Marin \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Crest Carbon Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Size": "29\"",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3004",
+    "slug": "salsa-alpine-350-wheelset",
+    "name": "Alpine 350 Wheelset",
+    "brand": "salsa",
+    "category": "wheelsets",
+    "priceCents": 68900,
+    "summary": "Alpine 350 Wheelset from Salsa \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Alpine 350 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Size": "700c",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3005",
+    "slug": "specialized-terra-400-wheelset",
+    "name": "Terra 400 Wheelset",
+    "brand": "specialized",
+    "category": "wheelsets",
+    "priceCents": 79100,
+    "summary": "Terra 400 Wheelset from Specialized \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Terra 400 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 68800,
+    "featured": true,
+    "specs": {
+      "Size": "29\"",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3006",
+    "slug": "surly-race-45-wheelset",
+    "name": "Race 45 Wheelset",
+    "brand": "surly",
+    "category": "wheelsets",
+    "priceCents": 89300,
+    "summary": "Race 45 Wheelset from Surly \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Race 45 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "specs": {
+      "Size": "700c",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3007",
+    "slug": "giant-flow-s40-wheelset",
+    "name": "Flow S40 Wheelset",
+    "brand": "giant",
+    "category": "wheelsets",
+    "priceCents": 99600,
+    "summary": "Flow S40 Wheelset from Giant \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Flow S40 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Size": "29\"",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3008",
+    "slug": "trek-grail-clx-wheelset",
+    "name": "Grail CLX Wheelset",
+    "brand": "trek",
+    "category": "wheelsets",
+    "priceCents": 109800,
+    "summary": "Grail CLX Wheelset from Trek \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The Grail CLX Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Size": "700c",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-3009",
+    "slug": "yeti-xr-331-wheelset",
+    "name": "XR 331 Wheelset",
+    "brand": "yeti",
+    "category": "wheelsets",
+    "priceCents": 120000,
+    "summary": "XR 331 Wheelset from Yeti \u2014 a wheelsets favorite at Alpha Bikes.",
+    "description": "The XR 331 Wheelset is one of Alpha Bikes' most-recommended wheelsets picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 104400,
+    "specs": {
+      "Size": "29\"",
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4000",
+    "slug": "all-city-riddler-45c-tcs-gravel-tire",
+    "name": "Riddler 45c TCS Gravel Tire",
+    "brand": "all-city",
+    "category": "tires",
+    "priceCents": 4000,
+    "summary": "Riddler 45c TCS Gravel Tire from All City \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Riddler 45c TCS Gravel Tire is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4001",
+    "slug": "cannondale-minion-dhf-29x2-5-tire",
+    "name": "Minion DHF 29x2.5 Tire",
+    "brand": "cannondale",
+    "category": "tires",
+    "priceCents": 4800,
+    "summary": "Minion DHF 29x2.5 Tire from Cannondale \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Minion DHF 29x2.5 Tire is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 4200,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-4002",
+    "slug": "kona-gravel-king-sk-40c",
+    "name": "Gravel King SK 40c",
+    "brand": "kona",
+    "category": "tires",
+    "priceCents": 5600,
+    "summary": "Gravel King SK 40c from Kona \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Gravel King SK 40c is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4003",
+    "slug": "marin-rocket-ron-29x2-4",
+    "name": "Rocket Ron 29x2.4",
+    "brand": "marin",
+    "category": "tires",
+    "priceCents": 6500,
+    "summary": "Rocket Ron 29x2.4 from Marin \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Rocket Ron 29x2.4 is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-4004",
+    "slug": "salsa-pathfinder-pro-38c",
+    "name": "Pathfinder Pro 38c",
+    "brand": "salsa",
+    "category": "tires",
+    "priceCents": 7300,
+    "summary": "Pathfinder Pro 38c from Salsa \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Pathfinder Pro 38c is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4005",
+    "slug": "specialized-aggressor-29x2-3",
+    "name": "Aggressor 29x2.3",
+    "brand": "specialized",
+    "category": "tires",
+    "priceCents": 8100,
+    "summary": "Aggressor 29x2.3 from Specialized \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Aggressor 29x2.3 is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 7000,
+    "featured": true,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-4006",
+    "slug": "surly-trail-king-27-5x2-4",
+    "name": "Trail King 27.5x2.4",
+    "brand": "surly",
+    "category": "tires",
+    "priceCents": 8900,
+    "summary": "Trail King 27.5x2.4 from Surly \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Trail King 27.5x2.4 is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4007",
+    "slug": "giant-rambler-40c",
+    "name": "Rambler 40c",
+    "brand": "giant",
+    "category": "tires",
+    "priceCents": 9700,
+    "summary": "Rambler 40c from Giant \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Rambler 40c is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-4008",
+    "slug": "trek-nano-40c",
+    "name": "Nano 40c",
+    "brand": "trek",
+    "category": "tires",
+    "priceCents": 10500,
+    "summary": "Nano 40c from Trek \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Nano 40c is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4009",
+    "slug": "yeti-rekon-race-29x2-25",
+    "name": "Rekon Race 29x2.25",
+    "brand": "yeti",
+    "category": "tires",
+    "priceCents": 11400,
+    "summary": "Rekon Race 29x2.25 from Yeti \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Rekon Race 29x2.25 is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 9900,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-4010",
+    "slug": "all-city-byway-44c",
+    "name": "Byway 44c",
+    "brand": "all-city",
+    "category": "tires",
+    "priceCents": 12200,
+    "summary": "Byway 44c from All City \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The Byway 44c is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "specs": {
+      "Tubeless": "Yes"
+    }
+  },
+  {
+    "id": "p-4011",
+    "slug": "cannondale-high-roller-ii-29x2-4",
+    "name": "High Roller II 29x2.4",
+    "brand": "cannondale",
+    "category": "tires",
+    "priceCents": 13000,
+    "summary": "High Roller II 29x2.4 from Cannondale \u2014 a tires favorite at Alpha Bikes.",
+    "description": "The High Roller II 29x2.4 is one of Alpha Bikes' most-recommended tires picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "specs": {
+      "Tubeless": "No"
+    }
+  },
+  {
+    "id": "p-5000",
+    "slug": "all-city-evolution-mini-7-u-lock",
+    "name": "Evolution Mini-7 U-Lock",
+    "brand": "all-city",
+    "category": "accessories",
+    "priceCents": 1500,
+    "summary": "Evolution Mini-7 U-Lock from All City \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Evolution Mini-7 U-Lock is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "p-5001",
+    "slug": "cannondale-macro-drive-1400-front-light",
+    "name": "Macro Drive 1400+ Front Light",
+    "brand": "cannondale",
+    "category": "accessories",
+    "priceCents": 3700,
+    "summary": "Macro Drive 1400+ Front Light from Cannondale \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Macro Drive 1400+ Front Light is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 3200
+  },
+  {
+    "id": "p-5002",
+    "slug": "kona-back-roller-classic-panniers",
+    "name": "Back-Roller Classic Panniers",
+    "brand": "kona",
+    "category": "accessories",
+    "priceCents": 6000,
+    "summary": "Back-Roller Classic Panniers from Kona \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Back-Roller Classic Panniers is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-5003",
+    "slug": "marin-airtool-co2-kit",
+    "name": "Airtool CO2 Kit",
+    "brand": "marin",
+    "category": "accessories",
+    "priceCents": 8200,
+    "summary": "Airtool CO2 Kit from Marin \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Airtool CO2 Kit is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-5004",
+    "slug": "salsa-multi-17-multitool",
+    "name": "Multi 17 Multitool",
+    "brand": "salsa",
+    "category": "accessories",
+    "priceCents": 10400,
+    "summary": "Multi 17 Multitool from Salsa \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Multi 17 Multitool is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-5005",
+    "slug": "specialized-trunk-bag-ex",
+    "name": "Trunk Bag EX",
+    "brand": "specialized",
+    "category": "accessories",
+    "priceCents": 12600,
+    "summary": "Trunk Bag EX from Specialized \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Trunk Bag EX is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 11000,
+    "featured": true
+  },
+  {
+    "id": "p-5006",
+    "slug": "surly-blaze-800-taillight",
+    "name": "Blaze 800 Taillight",
+    "brand": "surly",
+    "category": "accessories",
+    "priceCents": 14900,
+    "summary": "Blaze 800 Taillight from Surly \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Blaze 800 Taillight is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false
+  },
+  {
+    "id": "p-5007",
+    "slug": "giant-aero-bottle-cage",
+    "name": "Aero Bottle Cage",
+    "brand": "giant",
+    "category": "accessories",
+    "priceCents": 17100,
+    "summary": "Aero Bottle Cage from Giant \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Aero Bottle Cage is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-5008",
+    "slug": "trek-frame-pump-pro",
+    "name": "Frame Pump Pro",
+    "brand": "trek",
+    "category": "accessories",
+    "priceCents": 19300,
+    "summary": "Frame Pump Pro from Trek \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Frame Pump Pro is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-5009",
+    "slug": "yeti-handlebar-bag-compact",
+    "name": "Handlebar Bag Compact",
+    "brand": "yeti",
+    "category": "accessories",
+    "priceCents": 21500,
+    "summary": "Handlebar Bag Compact from Yeti \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Handlebar Bag Compact is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 18700
+  },
+  {
+    "id": "p-5010",
+    "slug": "all-city-phone-mount-pro",
+    "name": "Phone Mount Pro",
+    "brand": "all-city",
+    "category": "accessories",
+    "priceCents": 23800,
+    "summary": "Phone Mount Pro from All City \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Phone Mount Pro is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true
+  },
+  {
+    "id": "p-5011",
+    "slug": "cannondale-fender-set-commuter",
+    "name": "Fender Set Commuter",
+    "brand": "cannondale",
+    "category": "accessories",
+    "priceCents": 26000,
+    "summary": "Fender Set Commuter from Cannondale \u2014 a accessories favorite at Alpha Bikes.",
+    "description": "The Fender Set Commuter is one of Alpha Bikes' most-recommended accessories picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true
+  },
+  {
+    "id": "p-6000",
+    "slug": "all-city-synthe-mips-ii-helmet",
+    "name": "Synthe MIPS II Helmet",
+    "brand": "all-city",
+    "category": "apparel",
+    "priceCents": 2500,
+    "summary": "Synthe MIPS II Helmet from All City \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Synthe MIPS II Helmet is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Race"
+    }
+  },
+  {
+    "id": "p-6001",
+    "slug": "cannondale-attack-air-jersey",
+    "name": "Attack Air Jersey",
+    "brand": "cannondale",
+    "category": "apparel",
+    "priceCents": 5200,
+    "summary": "Attack Air Jersey from Cannondale \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Attack Air Jersey is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 4500,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Relaxed"
+    }
+  },
+  {
+    "id": "p-6002",
+    "slug": "kona-endura-bib-shorts",
+    "name": "Endura Bib Shorts",
+    "brand": "kona",
+    "category": "apparel",
+    "priceCents": 7900,
+    "summary": "Endura Bib Shorts from Kona \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Endura Bib Shorts is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Endurance"
+    }
+  },
+  {
+    "id": "p-6003",
+    "slug": "marin-aero-race-gloves",
+    "name": "Aero Race Gloves",
+    "brand": "marin",
+    "category": "apparel",
+    "priceCents": 10500,
+    "summary": "Aero Race Gloves from Marin \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Aero Race Gloves is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Race"
+    }
+  },
+  {
+    "id": "p-6004",
+    "slug": "salsa-trail-flannel",
+    "name": "Trail Flannel",
+    "brand": "salsa",
+    "category": "apparel",
+    "priceCents": 13200,
+    "summary": "Trail Flannel from Salsa \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Trail Flannel is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Relaxed"
+    }
+  },
+  {
+    "id": "p-6005",
+    "slug": "specialized-storm-shell-jacket",
+    "name": "Storm Shell Jacket",
+    "brand": "specialized",
+    "category": "apparel",
+    "priceCents": 15900,
+    "summary": "Storm Shell Jacket from Specialized \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Storm Shell Jacket is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 13800,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Endurance"
+    }
+  },
+  {
+    "id": "p-6006",
+    "slug": "surly-thermal-base-layer",
+    "name": "Thermal Base Layer",
+    "brand": "surly",
+    "category": "apparel",
+    "priceCents": 18600,
+    "summary": "Thermal Base Layer from Surly \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Thermal Base Layer is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": false,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Race"
+    }
+  },
+  {
+    "id": "p-6007",
+    "slug": "giant-race-cap",
+    "name": "Race Cap",
+    "brand": "giant",
+    "category": "apparel",
+    "priceCents": 21300,
+    "summary": "Race Cap from Giant \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Race Cap is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Relaxed"
+    }
+  },
+  {
+    "id": "p-6008",
+    "slug": "trek-merino-socks",
+    "name": "Merino Socks",
+    "brand": "trek",
+    "category": "apparel",
+    "priceCents": 24000,
+    "summary": "Merino Socks from Trek \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Merino Socks is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Endurance"
+    }
+  },
+  {
+    "id": "p-6009",
+    "slug": "yeti-cargo-bib-shorts",
+    "name": "Cargo Bib Shorts",
+    "brand": "yeti",
+    "category": "apparel",
+    "priceCents": 26600,
+    "summary": "Cargo Bib Shorts from Yeti \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Cargo Bib Shorts is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "salePriceCents": 23100,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Race"
+    }
+  },
+  {
+    "id": "p-6010",
+    "slug": "all-city-wind-vest",
+    "name": "Wind Vest",
+    "brand": "all-city",
+    "category": "apparel",
+    "priceCents": 29300,
+    "summary": "Wind Vest from All City \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Wind Vest is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "featured": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Relaxed"
+    }
+  },
+  {
+    "id": "p-6011",
+    "slug": "cannondale-trail-half-finger-gloves",
+    "name": "Trail Half-Finger Gloves",
+    "brand": "cannondale",
+    "category": "apparel",
+    "priceCents": 32000,
+    "summary": "Trail Half-Finger Gloves from Cannondale \u2014 a apparel favorite at Alpha Bikes.",
+    "description": "The Trail Half-Finger Gloves is one of Alpha Bikes' most-recommended apparel picks \u2014 a balance of value and performance our staff rides themselves.",
+    "inStock": true,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "specs": {
+      "Fit": "Endurance"
+    }
+  }
+]
