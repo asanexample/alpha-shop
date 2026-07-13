@@ -33,6 +33,7 @@ type server struct {
 	cartURL     string
 	ordersURL   string
 	checkoutURL string
+	accountsURL string
 	// Feature flags (ADR-099): evaluated in-process (flagd resolver) against flagship's sync source; the OTel
 	// hook stamps feature_flag.* onto the checkout span.
 	flags *openfeature.Client
@@ -103,6 +104,8 @@ func (s *server) routes() *http.ServeMux {
 
 	// Buy path — cart proxy + checkout orchestration (storefront → cart / orders / payment east-west).
 	s.registerBuyPath(mux)
+	// Auth — signup/login/logout/me (storefront → accounts east-west; sets/reads the session cookie).
+	s.registerAuth(mux)
 
 	// The SPA (embedded under -tags storefront). "/" is the catch-all; the /api and /healthz patterns above
 	// are more specific, so they win. Absent (plain build) → API only.
@@ -143,6 +146,7 @@ func main() {
 		cartURL:     getenv("CART_URL", "http://cart"),
 		ordersURL:   getenv("ORDERS_URL", "http://orders"),
 		checkoutURL: getenv("CHECKOUT_URL", "http://checkout"),
+		accountsURL: getenv("ACCOUNTS_URL", "http://accounts"),
 		flags:       flagClient,
 	}
 	handler := telemetry.WrapHandler(srv.routes(), "http.server")
