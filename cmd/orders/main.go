@@ -40,10 +40,12 @@ type server struct {
 }
 
 type placeRequest struct {
-	SessionID  string        `json:"sessionId"`
-	Lines      []orders.Line `json:"lines"`
-	Card       string        `json:"card,omitempty"`
-	Experience string        `json:"experience,omitempty"` // flagship checkout variant (standard | express)
+	SessionID     string         `json:"sessionId"`
+	Lines         []orders.Line  `json:"lines"`
+	Card          string         `json:"card,omitempty"`
+	Experience    string         `json:"experience,omitempty"` // flagship checkout variant (standard | express)
+	Address       orders.Address `json:"address,omitempty"`
+	PaymentMethod string         `json:"paymentMethod,omitempty"`
 }
 
 func (s *server) routes() *http.ServeMux {
@@ -70,13 +72,15 @@ func (s *server) routes() *http.ServeMux {
 		}
 
 		o := orders.Order{
-			ID:         orderID(),
-			SessionID:  req.SessionID,
-			Lines:      req.Lines,
-			TotalCents: total,
-			Experience: req.Experience,
-			Shipping:   "Standard (5–7 days)",
-			CreatedAt:  s.now(),
+			ID:            orderID(),
+			SessionID:     req.SessionID,
+			Lines:         req.Lines,
+			TotalCents:    total,
+			Experience:    req.Experience,
+			Shipping:      "Standard (5–7 days)",
+			Address:       req.Address,
+			PaymentMethod: req.PaymentMethod,
+			CreatedAt:     s.now(),
 		}
 		if req.Experience == "express" {
 			o.Shipping = "Express — free expedited (1–2 days)"
@@ -105,12 +109,19 @@ func (s *server) routes() *http.ServeMux {
 			// Cross-team east-west call (ADR-101): ask Bravo Dispatch's intake to create + route a real
 			// shipment. Best-effort — a failed or unreachable dispatch must not fail an already-paid order;
 			// it just means no ShipmentID this time (the demo equivalent of "we'll email you a tracking
-			// number shortly"). No address capture in this checkout, so recipient/origin/destination are
-			// synthesized demo values, same spirit as the Card field above.
+			// number shortly"). Use the real address when the checkout form captured one; synthesized demo
+			// values otherwise (same spirit as the Card field above), since address capture isn't required.
+			recipient, destination := "Alpha Bikes customer "+o.SessionID, "Customer Address on File"
+			if o.Address.Name != "" {
+				recipient = o.Address.Name
+			}
+			if o.Address.Line1 != "" {
+				destination = o.Address.Line1 + ", " + o.Address.City + ", " + o.Address.State + " " + o.Address.Zip
+			}
 			sh, err := s.dispatch.CreateShipment(r.Context(), dispatchclient.CreateShipmentRequest{
-				Recipient:   "Alpha Bikes customer " + o.SessionID,
+				Recipient:   recipient,
 				Origin:      "Alpha Bikes Warehouse",
-				Destination: "Customer Address on File",
+				Destination: destination,
 			})
 			if err != nil {
 				log.ErrorContext(r.Context(), "dispatch shipment request failed (continuing)", "orderId", o.ID, "err", err)
@@ -124,6 +135,12 @@ func (s *server) routes() *http.ServeMux {
 			writeJSON(w, http.StatusBadGateway, map[string]string{"error": "could not save order"})
 			return
 		}
+		// Record it in the user's order-history index (both placed and declined attempts — a customer
+		// should be able to see a failed payment in their history, not just successful orders). Best-effort:
+		// a failed index write must not fail an already-saved order, same posture as the event emit below.
+		if err := s.store.AppendToUserIndex(r.Context(), o.SessionID, orders.Summary{ID: o.ID, Status: o.Status, TotalCents: o.TotalCents, CreatedAt: o.CreatedAt}); err != nil {
+			log.ErrorContext(r.Context(), "order history index update failed (continuing)", "err", err)
+		}
 		if o.Status == orders.Placed {
 			// Order-placed event (best-effort; a failed emit must not fail a paid order).
 			ev, _ := json.Marshal(map[string]any{"orderId": o.ID, "totalCents": o.TotalCents, "lines": len(o.Lines), "createdAt": o.CreatedAt})
@@ -135,13 +152,37 @@ func (s *server) routes() *http.ServeMux {
 		writeJSON(w, http.StatusOK, o)
 	})
 
+	// GET /api/orders?userId=... — order history for the signed-in user (storefront resolves + supplies
+	// userId after verifying the session; orders itself still knows nothing about sessions/cookies).
+	mux.HandleFunc("GET /api/orders", func(w http.ResponseWriter, r *http.Request) {
+		userID := r.URL.Query().Get("userId")
+		if userID == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "userId is required"})
+			return
+		}
+		list, err := s.store.ListForUser(r.Context(), userID)
+		if err != nil {
+			writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+			return
+		}
+		writeJSON(w, http.StatusOK, map[string]any{"orders": list})
+	})
+
+	// GET /api/orders/{id}?userId=... — single-order lookup, now ownership-checked: an order carries a
+	// real name+address (PII) since this service gained address capture, so a 404 on mismatch (not just
+	// "any known id works") matters here in a way it didn't when an order was just cart contents + a price.
 	mux.HandleFunc("GET /api/orders/{id}", func(w http.ResponseWriter, r *http.Request) {
+		userID := r.URL.Query().Get("userId")
+		if userID == "" {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "userId is required"})
+			return
+		}
 		o, found, err := s.store.Get(r.Context(), r.PathValue("id"))
 		if err != nil {
 			writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
 			return
 		}
-		if !found {
+		if !found || o.SessionID != userID {
 			writeJSON(w, http.StatusNotFound, map[string]string{"error": "order not found"})
 			return
 		}
