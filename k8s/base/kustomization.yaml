@@ -5,8 +5,9 @@
 #
 # One Product, MANY services (ADR-067): storefront (edge: SPA + BFF) + the internal, east-west-only services
 # catalog (browse), cart, orders, payment, checkout (buy path — checkout orchestrates cart+orders, extracted
-# from storefront's own buypath.go). The Release records one digest per service; the ApplicationSet injects
-# one image override per service. East-west is SPIRE-mTLS (ADR-057): each internal callee has an
+# from storefront's own buypath.go), accounts (sole authority on identity — signup/login/logout/verify, no
+# JWT/shared-secret). The Release records one digest per service; the ApplicationSet injects one image
+# override per service. East-west is SPIRE-mTLS (ADR-057): each internal callee has an
 # authentication:required ingress CNP, and each caller a matching egress CNP.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -41,6 +42,10 @@ resources:
   - checkout/service.yaml
   - checkout/cnp-ingress-from-storefront.yaml
   - checkout/cnp-egress-to-cart-and-orders.yaml
+  # accounts — internal (identity; self-service DynamoDB users+sessions; no egress CNP needed)
+  - accounts/rollout.yaml
+  - accounts/service.yaml
+  - accounts/cnp-ingress-from-storefront.yaml
   # shared observability egress (all services)
   - netpol-egress-otel.yaml
   - netpol-egress-pyroscope.yaml
