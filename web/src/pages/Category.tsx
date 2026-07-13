@@ -1,11 +1,20 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Breadcrumb } from "../components/Breadcrumb";
+import { Pager } from "../components/Pager";
 import { ProductGrid } from "../components/ProductGrid";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "../components/States";
 import { useNav, useNavLookups, useProducts } from "../lib/hooks";
 import { KIND_LABEL, type Product } from "../lib/types";
 import styles from "./Category.module.css";
+
+// A category page facets/multi-select-filters brand client-side over the FULL result set (the catalog
+// API only filters a single brand server-side) — so the query below asks for every matching product in
+// one page (100 comfortably covers any one category today) rather than paginating the network request.
+// The Pager below instead pages the already-fetched, already-brand-filtered array client-side — no
+// extra round-trip per page, and the brand facet counts stay correct across every page.
+const CATEGORY_PAGE_SIZE = 100;
+const GRID_PAGE_SIZE = 24;
 
 interface Bracket {
   label: string;
@@ -46,6 +55,7 @@ export function Category() {
       onSale,
       minPrice: toInt(minDollar),
       maxPrice: toInt(maxDollar),
+      perPage: CATEGORY_PAGE_SIZE,
     }),
     [slug, onSale, minDollar, maxDollar],
   );
@@ -66,6 +76,15 @@ export function Category() {
     for (const p of apiProducts) m.set(p.brand, (m.get(p.brand) ?? 0) + 1);
     return m;
   }, [apiProducts]);
+
+  // Client-side grid paging over the already-fetched, already-brand-filtered array (see the note above).
+  const [gridPage, setGridPage] = useState(1);
+  useEffect(() => setGridPage(1), [query, selectedBrands]);
+  const gridTotalPages = Math.max(1, Math.ceil(products.length / GRID_PAGE_SIZE));
+  const pagedProducts = useMemo(
+    () => products.slice((gridPage - 1) * GRID_PAGE_SIZE, gridPage * GRID_PAGE_SIZE),
+    [products, gridPage],
+  );
 
   const brandsToShow = useMemo(
     () => (nav?.brands ?? []).filter((b) => (brandCounts.get(b.slug) ?? 0) > 0 || selectedBrands.has(b.slug)),
@@ -328,7 +347,10 @@ export function Category() {
               )}
             </EmptyBlock>
           ) : (
-            <ProductGrid products={products as Product[]} />
+            <>
+              <ProductGrid products={pagedProducts as Product[]} />
+              <Pager page={gridPage} totalPages={gridTotalPages} onChange={setGridPage} />
+            </>
           )}
         </section>
       </div>

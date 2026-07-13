@@ -1,19 +1,34 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router-dom";
+import { Pager } from "../components/Pager";
 import { ProductGrid } from "../components/ProductGrid";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "../components/States";
 import { useProducts } from "../lib/hooks";
 import styles from "./Search.module.css";
 
+const PER_PAGE = 24;
+
+function toPage(v: string | null): number {
+  const n = v ? parseInt(v, 10) : 1;
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
 export function Search() {
   const [params, setParams] = useSearchParams();
   const q = params.get("q") ?? "";
+  const page = toPage(params.get("page"));
   const [term, setTerm] = useState(q);
   useEffect(() => setTerm(q), [q]);
 
-  // With no query we list everything (a plain "browse all").
-  const { data, isLoading, isError, error, refetch } = useProducts(q ? { q } : {});
+  // With no query we list everything (a plain "browse all") — the biggest listing in the shop, so
+  // this is where server-side pagination matters most.
+  const query = useMemo(
+    () => ({ ...(q ? { q } : {}), page, perPage: PER_PAGE }),
+    [q, page],
+  );
+  const { data, isLoading, isError, error, refetch, isFetching } = useProducts(query);
   const products = data?.products ?? [];
+  const totalPages = data ? Math.max(1, Math.ceil(data.total / data.perPage)) : 1;
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -21,6 +36,14 @@ export function Search() {
     const v = term.trim();
     if (v) next.set("q", v);
     else next.delete("q");
+    next.delete("page"); // a new search always starts back at page 1
+    setParams(next, { replace: true });
+  }
+
+  function goToPage(p: number) {
+    const next = new URLSearchParams(params);
+    if (p > 1) next.set("page", String(p));
+    else next.delete("page");
     setParams(next, { replace: true });
   }
 
@@ -45,7 +68,8 @@ export function Search() {
           </button>
         </form>
         <span className={styles.count} aria-live="polite">
-          {isLoading ? "Searching…" : `${products.length} ${products.length === 1 ? "result" : "results"}`}
+          {isLoading ? "Searching…" : `${data?.total ?? 0} ${data?.total === 1 ? "result" : "results"}`}
+          {isFetching && !isLoading ? " · updating" : ""}
         </span>
       </div>
 
@@ -62,7 +86,10 @@ export function Search() {
           )}
         </EmptyBlock>
       ) : (
-        <ProductGrid products={products} />
+        <>
+          <ProductGrid products={products} />
+          <Pager page={page} totalPages={totalPages} onChange={goToPage} />
+        </>
       )}
     </div>
   );

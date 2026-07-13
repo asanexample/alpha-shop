@@ -27,7 +27,8 @@ function makeBrandResolver(brands: Brand[] | undefined) {
 }
 
 export function Cart() {
-  const { items, count, subtotalCents, isLoading, isError, removeItem, removingId } = useCart();
+  const { items, count, subtotalCents, isLoading, isError, removeItem, removingId, setQty, updatingId } =
+    useCart();
   const { data: nav } = useNav();
   const resolveBrand = useMemo(() => makeBrandResolver(nav?.brands), [nav?.brands]);
 
@@ -86,7 +87,8 @@ export function Cart() {
         <ul className={styles.lines} aria-label="Cart items">
           {items.map((line) => {
             const brand = resolveBrand(line);
-            const busy = removingId === line.productId;
+            const updating = updatingId === line.productId;
+            const busy = removingId === line.productId || updating;
             return (
               <li key={line.productId} className={styles.line} data-busy={busy}>
                 <div className={styles.thumb}>
@@ -109,7 +111,27 @@ export function Cart() {
 
                 <div className={styles.qty}>
                   <span className={styles.qtyLabel}>Qty</span>
-                  <span className={styles.qtyValue}>{line.qty}</span>
+                  <div className={styles.stepper}>
+                    <button
+                      type="button"
+                      className={styles.step}
+                      onClick={() => setQty(line.productId, line.qty - 1)}
+                      disabled={busy}
+                      aria-label={`Decrease quantity of ${line.name}`}
+                    >
+                      −
+                    </button>
+                    <span className={styles.qtyValue}>{line.qty}</span>
+                    <button
+                      type="button"
+                      className={styles.step}
+                      onClick={() => setQty(line.productId, line.qty + 1)}
+                      disabled={busy}
+                      aria-label={`Increase quantity of ${line.name}`}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
 
                 <div className={styles.lineTotal}>{formatCents(line.priceCents * line.qty)}</div>

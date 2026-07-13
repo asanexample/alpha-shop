@@ -33,3 +33,11 @@ export function savingsLabel(priceCents: number, saleCents: number): string {
   const pct = Math.round((1 - saleCents / priceCents) * 100);
   return `-${pct}%`;
 }
+
+const dateFmt = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
+
+/** Format an ISO timestamp (e.g. an order's createdAt) as a short date, e.g. "Jul 12, 2026". */
+export function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso : dateFmt.format(d);
+}

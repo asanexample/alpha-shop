@@ -33,11 +33,13 @@ interface CartValue {
 
   // Mutations.
   addItem: (item: CartAddInput, qty?: number) => void;
+  setQty: (productId: string, qty: number) => void;
   removeItem: (productId: string) => void;
   clear: () => void;
   isAdding: boolean;
   isClearing: boolean;
   removingId: string | null;
+  updatingId: string | null;
 
   // Toasts.
   notify: (message: string) => void;
@@ -98,6 +100,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     onError: () => pushToast("Couldn't add that to your cart. Please try again."),
   });
 
+  const setQtyMut = useMutation({
+    mutationFn: ({ productId, qty }: { productId: string; qty: number }) =>
+      api.cart.setQty(productId, qty),
+    onSuccess: (env) => {
+      queryClient.setQueryData(CART_QUERY_KEY, env);
+      void invalidateCart();
+    },
+    onError: () => pushToast("Couldn't update that quantity. Please try again."),
+  });
+
   const removeMut = useMutation({
     mutationFn: (productId: string) => api.cart.remove(productId),
     onSuccess: (env) => {
@@ -117,11 +129,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (item: CartAddInput, qty = 1) => addMut.mutate({ item, qty }),
     [addMut],
   );
+  const setQty = useCallback(
+    (productId: string, qty: number) => setQtyMut.mutate({ productId, qty }),
+    [setQtyMut],
+  );
   const removeItem = useCallback((productId: string) => removeMut.mutate(productId), [removeMut]);
   const clear = useCallback(() => clearMut.mutate(), [clearMut]);
 
   const env = cartQuery.data;
   const removingId = removeMut.isPending ? (removeMut.variables ?? null) : null;
+  const updatingId = setQtyMut.isPending ? (setQtyMut.variables?.productId ?? null) : null;
 
   const value = useMemo<CartValue>(
     () => ({
@@ -131,11 +148,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       isLoading: cartQuery.isLoading,
       isError: cartQuery.isError,
       addItem,
+      setQty,
       removeItem,
       clear,
       isAdding: addMut.isPending,
       isClearing: clearMut.isPending,
       removingId,
+      updatingId,
       notify: pushToast,
       toasts,
       dismiss,
@@ -145,11 +164,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       cartQuery.isLoading,
       cartQuery.isError,
       addItem,
+      setQty,
       removeItem,
       clear,
       addMut.isPending,
       clearMut.isPending,
       removingId,
+      updatingId,
       pushToast,
       toasts,
       dismiss,

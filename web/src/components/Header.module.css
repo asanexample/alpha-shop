@@ -235,6 +235,31 @@
   border-color: var(--ink);
 }
 
+.account {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.signOut {
+  border: none;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: underline;
+}
+.signOut:hover {
+  color: var(--ink);
+}
+@media (max-width: 900px) {
+  .signOut {
+    display: none;
+  }
+}
+
 .cartCount {
   position: absolute;
   top: -7px;

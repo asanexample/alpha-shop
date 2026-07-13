@@ -33,6 +33,13 @@ func (s *server) registerBuyPath(mux *http.ServeMux) {
 		}
 		s.proxy(w, r, http.MethodPost, s.cartURL+"/api/cart/"+url.PathEscape(sid)+"/items", r.Body)
 	})
+	mux.HandleFunc("PATCH /api/cart/items/{productId}", func(w http.ResponseWriter, r *http.Request) {
+		sid, ok := session(w, r)
+		if !ok {
+			return
+		}
+		s.proxy(w, r, http.MethodPatch, s.cartURL+"/api/cart/"+url.PathEscape(sid)+"/items/"+url.PathEscape(r.PathValue("productId")), r.Body)
+	})
 	mux.HandleFunc("DELETE /api/cart/items/{productId}", func(w http.ResponseWriter, r *http.Request) {
 		sid, ok := session(w, r)
 		if !ok {
@@ -84,17 +91,37 @@ func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var body struct {
-		Card string `json:"card"`
+		Card          string       `json:"card"`
+		Address       checkoutAddr `json:"address"`
+		PaymentMethod string       `json:"paymentMethod"`
 	}
-	_ = json.NewDecoder(r.Body).Decode(&body) // optional (card is a demo field)
+	_ = json.NewDecoder(r.Body).Decode(&body) // optional fields (card/address are demo/best-effort)
 
 	if anonSID := r.Header.Get(sessionHeader); anonSID != "" {
 		s.mergeAnonymousCart(r.Context(), anonSID, u.UserID)
 	}
 
 	experience, _ := s.flags.StringValue(r.Context(), "checkout-experience", "standard", flags.EvalContext(u.UserID))
-	reqBody, _ := json.Marshal(map[string]string{"sessionId": u.UserID, "card": body.Card, "experience": experience})
+	reqBody, _ := json.Marshal(map[string]any{
+		"sessionId":     u.UserID,
+		"card":          body.Card,
+		"experience":    experience,
+		"address":       body.Address,
+		"paymentMethod": body.PaymentMethod,
+	})
 	s.proxy(w, r, http.MethodPost, s.checkoutURL+"/api/checkout", bytes.NewReader(reqBody))
+}
+
+// checkoutAddr mirrors orders.Address (kept local for the same reason checkout's own copy is —
+// storefront never inspects the fields, just passes the form's address through unchanged).
+type checkoutAddr struct {
+	Name    string `json:"name"`
+	Line1   string `json:"line1"`
+	Line2   string `json:"line2,omitempty"`
+	City    string `json:"city"`
+	State   string `json:"state"`
+	Zip     string `json:"zip"`
+	Country string `json:"country"`
 }
 
 // proxy forwards a request to an internal service and streams the response back verbatim.
