@@ -49,9 +49,13 @@ export interface HomeData {
   categories: Category[];
 }
 
+// GET /api/products (and /api/catalog/products) is a page of results — page/perPage are 1-indexed /
+// as-served (echoed back so the pager can compute page count from total).
 export interface ProductList {
   products: Product[];
-  count: number;
+  total: number;
+  page: number;
+  perPage: number;
 }
 
 export interface ProductDetail {
@@ -106,6 +110,25 @@ export interface CartEnvelope {
 
 export type OrderStatus = "placed" | "declined";
 
+// Shipping/billing address captured at checkout (internal/orders.Address).
+export interface Address {
+  name: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+}
+
+export type PaymentMethod = "card" | "paypal" | "apple_pay";
+
+export const PAYMENT_METHOD_LABEL: Record<PaymentMethod, string> = {
+  card: "Credit / debit card",
+  paypal: "PayPal",
+  apple_pay: "Apple Pay",
+};
+
 // A completed (or declined) checkout. reason is present only when declined.
 export interface Order {
   id: string;
@@ -118,7 +141,24 @@ export interface Order {
   experience?: string; // flagship-flagged checkout variant (standard | express)
   shipping?: string;
   shipmentId?: string; // Bravo Dispatch tracking number (e.g. "BD-10023"), when dispatch was reachable
+  address?: Address;
+  paymentMethod?: PaymentMethod;
   createdAt: string;
+}
+
+// GET /api/orders list item (internal/orders.Summary) — enough for an order-history row.
+export interface OrderSummary {
+  id: string;
+  status: OrderStatus;
+  totalCents: number;
+  createdAt: string;
+}
+
+// ---- Accounts (mirrors cmd/storefront/auth.go's authUser) ----
+export interface AuthUser {
+  userId: string;
+  email: string;
+  name: string;
 }
 
 // A product carries slugs; true = on sale.

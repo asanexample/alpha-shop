@@ -40,6 +40,18 @@ type cartLine struct {
 	Qty        int    `json:"qty"`
 }
 
+// address mirrors orders.Address (kept local for the same reason cartLine mirrors cart.Line) — checkout
+// itself never inspects the fields, just passes the form's address through to orders unchanged.
+type address struct {
+	Name    string `json:"name"`
+	Line1   string `json:"line1"`
+	Line2   string `json:"line2,omitempty"`
+	City    string `json:"city"`
+	State   string `json:"state"`
+	Zip     string `json:"zip"`
+	Country string `json:"country"`
+}
+
 type cartView struct {
 	Items []cartLine `json:"items"`
 }
@@ -60,9 +72,11 @@ func (s *server) routes() *http.ServeMux {
 // authorizes payment), and clears the cart on a successful order.
 func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		SessionID  string `json:"sessionId"`
-		Card       string `json:"card"`
-		Experience string `json:"experience"`
+		SessionID     string  `json:"sessionId"`
+		Card          string  `json:"card"`
+		Experience    string  `json:"experience"`
+		Address       address `json:"address"`
+		PaymentMethod string  `json:"paymentMethod"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.SessionID == "" {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "missing sessionId"})
@@ -79,7 +93,14 @@ func (s *server) checkout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderReq := map[string]any{"sessionId": body.SessionID, "lines": cart.Items, "card": body.Card, "experience": body.Experience}
+	orderReq := map[string]any{
+		"sessionId":     body.SessionID,
+		"lines":         cart.Items,
+		"card":          body.Card,
+		"experience":    body.Experience,
+		"address":       body.Address,
+		"paymentMethod": body.PaymentMethod,
+	}
 	reqBody, _ := json.Marshal(orderReq)
 	raw, status, err := s.call(r.Context(), http.MethodPost, s.ordersURL+"/api/orders", bytes.NewReader(reqBody))
 	if err != nil {

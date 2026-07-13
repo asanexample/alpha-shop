@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useNav } from "../lib/hooks";
 import { KIND_LABEL, KIND_ORDER, type Category, type Kind } from "../lib/types";
-import { CartIcon, ChevronDown, Chainring, CloseIcon, MenuIcon, SearchIcon } from "./Glyphs";
+import { CartIcon, ChevronDown, Chainring, CloseIcon, MenuIcon, SearchIcon, UserIcon } from "./Glyphs";
 import styles from "./Header.module.css";
 
 function useGroupedCategories(categories: Category[] | undefined) {
@@ -27,6 +28,7 @@ export function Header() {
   const { data } = useNav();
   const groups = useGroupedCategories(data?.categories);
   const { count } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
   const [openKind, setOpenKind] = useState<Kind | null>(null);
@@ -171,6 +173,26 @@ export function Header() {
             />
           </form>
 
+          {isAuthenticated ? (
+            <span className={styles.account}>
+              <Link
+                to="/account/orders"
+                className={styles.iconBtn}
+                aria-label={`Your account — ${user?.name || user?.email}`}
+                title={user?.name || user?.email}
+              >
+                <UserIcon />
+              </Link>
+              <button type="button" className={styles.signOut} onClick={() => logout()}>
+                Sign out
+              </button>
+            </span>
+          ) : (
+            <Link to="/login" className={styles.iconBtn} aria-label="Sign in">
+              <UserIcon />
+            </Link>
+          )}
+
           <Link
             to="/cart"
             className={styles.iconBtn}
@@ -237,6 +259,35 @@ export function Header() {
                   ))}
                 </div>
               ))}
+
+              <div className={styles.drawerGroup}>
+                <div className={styles.drawerGroupTitle}>Account</div>
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      to="/account/orders"
+                      className={styles.drawerLink}
+                      onClick={() => setDrawer(false)}
+                    >
+                      Your orders
+                    </Link>
+                    <button
+                      type="button"
+                      className={styles.drawerLink}
+                      onClick={() => {
+                        logout();
+                        setDrawer(false);
+                      }}
+                    >
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <Link to="/login" className={styles.drawerLink} onClick={() => setDrawer(false)}>
+                    Sign in
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </>

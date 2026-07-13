@@ -2,11 +2,15 @@
 // endpoints additionally carry the X-Shop-Session header (see cmd/storefront/buypath.go).
 import { getSessionId } from "./session";
 import type {
+  Address,
+  AuthUser,
   CartEnvelope,
   CartLine,
   HomeData,
   NavData,
   Order,
+  OrderSummary,
+  PaymentMethod,
   ProductDetail,
   ProductList,
 } from "./types";
@@ -81,7 +85,8 @@ async function sessionJSON<T>(
   return (await res.json()) as T;
 }
 
-// Filters accepted by GET /api/products. minPrice/maxPrice are whole DOLLARS.
+// Filters accepted by GET /api/products. minPrice/maxPrice are whole DOLLARS. page/perPage are
+// 1-indexed; omitted ⇒ the BFF/catalog defaults (page 1, 24 per page).
 export interface ProductQuery {
   category?: string;
   brand?: string;
@@ -91,6 +96,8 @@ export interface ProductQuery {
   maxPrice?: number;
   onSale?: boolean;
   featured?: boolean;
+  page?: number;
+  perPage?: number;
 }
 
 export function productSearchParams(q: ProductQuery): URLSearchParams {
@@ -103,6 +110,8 @@ export function productSearchParams(q: ProductQuery): URLSearchParams {
   if (q.maxPrice != null && q.maxPrice > 0) p.set("maxPrice", String(q.maxPrice));
   if (q.onSale) p.set("onSale", "true");
   if (q.featured) p.set("featured", "true");
+  if (q.page != null && q.page > 1) p.set("page", String(q.page));
+  if (q.perPage != null && q.perPage > 0) p.set("perPage", String(q.perPage));
   return p;
 }
 
@@ -121,14 +130,34 @@ export const api = {
     get: (signal?: AbortSignal) => sessionJSON<CartEnvelope>("/api/cart", { signal }),
     add: (line: CartLine) =>
       sessionJSON<CartEnvelope>("/api/cart/items", { method: "POST", body: line }),
+    setQty: (productId: string, qty: number) =>
+      sessionJSON<CartEnvelope>(`/api/cart/items/${encodeURIComponent(productId)}`, {
+        method: "PATCH",
+        body: { qty },
+      }),
     remove: (productId: string) =>
       sessionJSON<CartEnvelope>(`/api/cart/items/${encodeURIComponent(productId)}`, {
         method: "DELETE",
       }),
     clear: () => sessionJSON<void>("/api/cart", { method: "DELETE" }),
   },
-  // Checkout returns HTTP 200 for both "placed" and "declined"; a 400 { error } means the cart is empty.
-  checkout: (card: string) => sessionJSON<Order>("/api/checkout", { method: "POST", body: { card } }),
+  // Checkout requires a signed-in session (the BFF resolves the account from the auth cookie) and
+  // returns HTTP 200 for both "placed" and "declined"; a 400 { error } means the cart is empty, a 401
+  // means "sign in first".
+  checkout: (input: { card: string; address: Address; paymentMethod: PaymentMethod }) =>
+    sessionJSON<Order>("/api/checkout", { method: "POST", body: input }),
   order: (id: string, signal?: AbortSignal) =>
     sessionJSON<Order>(`/api/orders/${encodeURIComponent(id)}`, { signal }),
+  orders: (signal?: AbortSignal) =>
+    sessionJSON<{ orders: OrderSummary[] }>("/api/orders", { signal }),
+
+  // ---- Auth (cookie session — accounts is the sole authority on identity) ----
+  auth: {
+    signup: (input: { email: string; password: string; name: string }) =>
+      sessionJSON<AuthUser>("/api/auth/signup", { method: "POST", body: input }),
+    login: (input: { email: string; password: string }) =>
+      sessionJSON<AuthUser>("/api/auth/login", { method: "POST", body: input }),
+    logout: () => sessionJSON<void>("/api/auth/logout", { method: "POST" }),
+    me: (signal?: AbortSignal) => sessionJSON<AuthUser>("/api/auth/me", { signal }),
+  },
 };
