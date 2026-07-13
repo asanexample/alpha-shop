@@ -64,6 +64,22 @@ func newMux(store *cart.Store) *http.ServeMux {
 		writeCart(w, c)
 	})
 
+	mux.HandleFunc("PATCH /api/cart/{sessionId}/items/{productId}", func(w http.ResponseWriter, r *http.Request) {
+		var body struct {
+			Qty int `json:"qty"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid JSON: " + err.Error()})
+			return
+		}
+		c, err := store.SetQty(r.Context(), r.PathValue("sessionId"), r.PathValue("productId"), body.Qty)
+		if err != nil {
+			fail(w, r, "set quantity", err)
+			return
+		}
+		writeCart(w, c)
+	})
+
 	mux.HandleFunc("DELETE /api/cart/{sessionId}", func(w http.ResponseWriter, r *http.Request) {
 		if err := store.Clear(r.Context(), r.PathValue("sessionId")); err != nil {
 			fail(w, r, "clear cart", err)

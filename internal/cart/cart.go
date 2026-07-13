@@ -116,6 +116,26 @@ func (s *Store) Remove(ctx context.Context, sessionID, productID string) (Cart, 
 	return c, s.save(ctx, &c)
 }
 
+// SetQty sets a line's quantity directly (qty <= 0 removes the line, same as Remove). Unlike Add,
+// which increments an existing line, this replaces it — the UI's quantity stepper wants "set to N",
+// not "add N more".
+func (s *Store) SetQty(ctx context.Context, sessionID, productID string, qty int) (Cart, error) {
+	if qty <= 0 {
+		return s.Remove(ctx, sessionID, productID)
+	}
+	c, err := s.Get(ctx, sessionID)
+	if err != nil {
+		return Cart{}, err
+	}
+	for i := range c.Items {
+		if c.Items[i].ProductID == productID {
+			c.Items[i].Qty = qty
+			return c, s.save(ctx, &c)
+		}
+	}
+	return c, nil // unknown product id: no-op, matches Remove's behavior on a missing line
+}
+
 // Clear empties the session's cart.
 func (s *Store) Clear(ctx context.Context, sessionID string) error {
 	return s.kv.Delete(ctx, sessionID)
