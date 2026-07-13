@@ -1,0 +1,111 @@
+# accounts — internal accounts/session service (ClusterIP, no HTTPRoute). Sole authority on identity:
+# signup/login/logout/verify. Owns self-service DynamoDB (USERS_TABLE/SESSIONS_TABLE, ADR-073) via its
+# own SA (app-alpha-accounts) — Pod Identity binds one role per SA, same as cart/orders. No egress CNP:
+# accounts calls nothing else (no cross-service calls of its own).
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: accounts
+  labels:
+    app: accounts
+    app.kubernetes.io/name: shop-accounts
+    team: alpha
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: accounts
+  strategy:
+    canary:
+      maxSurge: 1
+      maxUnavailable: 0
+      steps:
+        - setWeight: 100
+  template:
+    metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-sdk: "platform"
+      labels:
+        app: accounts
+        app.kubernetes.io/name: shop-accounts
+        team: alpha
+    spec:
+      serviceAccountName: app-alpha-accounts
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: accounts
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          matchLabelKeys: [rollouts-pod-template-hash]
+          labelSelector:
+            matchLabels:
+              app: accounts
+      containers:
+        - name: accounts
+          image: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-accounts:placeholder
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: accounts-resources
+                optional: true
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: AWS_REGION
+              value: us-east-1
+            - name: OTEL_SERVICE_NAME
+              value: shop-accounts
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.namespace=alpha-shop
+            - name: PYROSCOPE_SERVER_ADDRESS
+              value: https://preprod-profiles.aws.refplat.org
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            periodSeconds: 10
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

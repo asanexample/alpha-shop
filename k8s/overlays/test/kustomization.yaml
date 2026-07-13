@@ -16,6 +16,8 @@ replicas:
     count: 1
   - name: checkout
     count: 1
+  - name: accounts
+    count: 1
 images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-storefront
     newTag: placeholder
@@ -28,4 +30,6 @@ images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-payment
     newTag: placeholder
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-checkout
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-accounts
     newTag: placeholder

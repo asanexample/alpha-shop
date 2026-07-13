@@ -1,0 +1,21 @@
+# East-west ingress: accounts accepts traffic ONLY from the storefront (BFF), port 8080, SPIRE mutual
+# auth required (ADR-057). Additive allow over the environment default-deny ingress. No egress CNP for
+# accounts: it makes no outbound east-west calls of its own.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-accounts-ingress-from-storefront
+spec:
+  endpointSelector:
+    matchLabels:
+      app: accounts
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: storefront
+      authentication:
+        mode: required
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

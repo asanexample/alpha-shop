@@ -20,6 +20,8 @@ replicas:
     count: 3
   - name: checkout
     count: 3
+  - name: accounts
+    count: 3
 patches:
   - target:
       group: argoproj.io
@@ -105,4 +107,6 @@ images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-payment
     newTag: placeholder
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-checkout
+    newTag: placeholder
+  - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-accounts
     newTag: placeholder
