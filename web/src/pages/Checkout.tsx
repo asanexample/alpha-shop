@@ -28,6 +28,7 @@ export function Checkout() {
   const [zip, setZip] = useState("");
   const [country, setCountry] = useState("United States");
   const [declined, setDeclined] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const placeOrder = useMutation({
     mutationFn: () => {
@@ -40,7 +41,10 @@ export function Checkout() {
         zip: zip.trim(),
         country: country.trim(),
       };
-      return api.checkout({ card: card.trim(), address, paymentMethod: method });
+      // Only submit the card value for the card method — leftover text from a since-abandoned card entry
+      // shouldn't leak into a PayPal/Apple Pay submission (e.g. accidentally tripping the "ends in 0000"
+      // decline simulation for a method that was never actually charged as a card).
+      return api.checkout({ card: method === "card" ? card.trim() : "", address, paymentMethod: method });
     },
     onSuccess: (order: Order) => {
       if (order.status === "placed") {
@@ -95,8 +99,26 @@ export function Checkout() {
     );
   }
 
+  // The form uses noValidate (so a failed submission shows our own message, not the browser's native
+  // tooltip) — which means nothing enforces the `required` attributes below unless this does it instead.
+  function validationError(): string | null {
+    if (!name.trim() || !line1.trim() || !city.trim() || !state.trim() || !zip.trim() || !country.trim()) {
+      return "Please fill in your name and shipping address.";
+    }
+    if (method === "card" && !card.trim()) {
+      return "Please enter a card number (this is a demo — any digits work).";
+    }
+    return null;
+  }
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
+    const err = validationError();
+    if (err) {
+      setFormError(err);
+      return;
+    }
+    setFormError(null);
     setDeclined(null);
     placeOrder.mutate();
   }
@@ -246,6 +268,12 @@ export function Checkout() {
               </p>
             )}
           </fieldset>
+
+          {formError ? (
+            <div className={styles.declined} role="alert">
+              <strong>Almost there.</strong> {formError}
+            </div>
+          ) : null}
 
           {declined ? (
             <div className={styles.declined} role="alert">

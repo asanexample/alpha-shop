@@ -1,18 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { ErrorBlock, LoadingBlock } from "../components/States";
+import { useAuth } from "../context/AuthContext";
 import { ApiError, api } from "../lib/api";
 import { formatCents } from "../lib/format";
 import styles from "./Order.module.css";
 
 export function Order() {
   const { id } = useParams<{ id: string }>();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: order, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["order", id],
     queryFn: ({ signal }) => api.order(id as string, signal),
-    enabled: !!id,
-    retry: (count, err) => ((err as { status?: number })?.status === 404 ? false : count < 2),
+    enabled: !!id && isAuthenticated,
+    // Neither a 404 (wrong id) nor a 401 (session expired mid-visit) will resolve by retrying.
+    retry: (count, err) => {
+      const status = (err as { status?: number })?.status;
+      return status === 404 || status === 401 ? false : count < 2;
+    },
   });
+
+  if (authLoading) {
+    return (
+      <div className={styles.wrap}>
+        <LoadingBlock label="Loading your order…" />
+      </div>
+    );
+  }
+
+  // Order lookups are login-gated server-side (an order carries a real name+address now) — a signed-out
+  // visit, or a session that expired while this page was open, sends them to sign in and straight back.
+  if (!isAuthenticated) {
+    return <Navigate to={`/login?next=${encodeURIComponent(`/order/${id}`)}`} replace />;
+  }
 
   if (isLoading) {
     return (
