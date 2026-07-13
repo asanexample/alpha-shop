@@ -26,4 +26,10 @@ func TestAuthorize(t *testing.T) {
 	if _, err := Authorize(ChargeRequest{OrderRef: "ord_4", AmountCents: 0}); err == nil {
 		t.Fatal("expected error for non-positive amount")
 	}
+
+	// Method is recorded on the result but doesn't change the decline rules — same authorization
+	// regardless of which payment method was chosen.
+	if res, _ := Authorize(ChargeRequest{OrderRef: "ord_5", AmountCents: 4200, Method: "paypal"}); res.Status != Approved || res.Method != "paypal" {
+		t.Fatalf("expected approved paypal charge to echo back its method: %+v", res)
+	}
 }

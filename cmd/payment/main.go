@@ -46,6 +46,7 @@ func newMux() *http.ServeMux {
 		span.SetAttributes(
 			attribute.Int("payment.amount_cents", req.AmountCents),
 			attribute.String("payment.order_ref", req.OrderRef),
+			attribute.String("payment.method", req.Method),
 		)
 		simulateProcessing(ctx)
 		res, err := payment.Authorize(req)

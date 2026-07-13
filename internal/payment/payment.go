@@ -25,6 +25,10 @@ type ChargeRequest struct {
 	Currency    string `json:"currency"`
 	// Card is a demo-only descriptor (e.g. "visa-4242"); a value ending in "0000" simulates a declined card.
 	Card string `json:"card,omitempty"`
+	// Method is the payment method chosen at checkout (e.g. "card", "paypal", "apple_pay"). Cosmetic — the
+	// same decline rules (bad card, implausible amount) apply uniformly regardless of method; this isn't a
+	// distinct mock processor per method, just a recorded choice.
+	Method string `json:"method,omitempty"`
 }
 
 // ChargeResult is the authorization outcome.
@@ -32,6 +36,7 @@ type ChargeResult struct {
 	PaymentID   string `json:"paymentId"`
 	Status      Status `json:"status"`
 	AmountCents int    `json:"amountCents"`
+	Method      string `json:"method,omitempty"`
 	Reason      string `json:"reason,omitempty"`
 }
 
@@ -45,7 +50,7 @@ func Authorize(req ChargeRequest) (ChargeResult, error) {
 	if err != nil {
 		return ChargeResult{}, err
 	}
-	res := ChargeResult{PaymentID: id, AmountCents: req.AmountCents, Status: Approved}
+	res := ChargeResult{PaymentID: id, AmountCents: req.AmountCents, Method: req.Method, Status: Approved}
 
 	switch {
 	case len(req.Card) >= 4 && req.Card[len(req.Card)-4:] == "0000":

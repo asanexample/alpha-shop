@@ -48,8 +48,24 @@ func (s *server) registerBuyPath(mux *http.ServeMux) {
 		s.proxy(w, r, http.MethodDelete, s.cartURL+"/api/cart/"+url.PathEscape(sid), nil)
 	})
 	mux.HandleFunc("POST /api/checkout", s.checkout)
+	// Both order-history routes require a signed-in account (an order has no stable identity to look up
+	// by for a guest, and now carries a real address — orders' own ownership check needs a userId to
+	// check against).
 	mux.HandleFunc("GET /api/orders/{id}", func(w http.ResponseWriter, r *http.Request) {
-		s.proxy(w, r, http.MethodGet, s.ordersURL+"/api/orders/"+url.PathEscape(r.PathValue("id")), nil)
+		u, err := s.currentUser(r)
+		if err != nil {
+			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "sign in to view this order"})
+			return
+		}
+		s.proxy(w, r, http.MethodGet, s.ordersURL+"/api/orders/"+url.PathEscape(r.PathValue("id"))+"?userId="+url.QueryEscape(u.UserID), nil)
+	})
+	mux.HandleFunc("GET /api/orders", func(w http.ResponseWriter, r *http.Request) {
+		u, err := s.currentUser(r)
+		if err != nil {
+			writeJSON(w, http.StatusUnauthorized, map[string]string{"error": "sign in to view your orders"})
+			return
+		}
+		s.proxy(w, r, http.MethodGet, s.ordersURL+"/api/orders?userId="+url.QueryEscape(u.UserID), nil)
 	})
 }
 
