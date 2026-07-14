@@ -40,6 +40,20 @@ images:
   - name: 829808296602.dkr.ecr.us-east-1.amazonaws.com/team-alpha/shop-accounts
     newTag: placeholder
 patches:
+  # Dev-only fault injection (never in prod): honored by cmd/storefront/chaos.go only when this env var is
+  # set, and only then does an inbound X-Chaos-Fault header from Pulse (the platform's synthetic-traffic
+  # generator, platform#1579) do anything. Absent everywhere else, including this repo's own prod overlay.
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: storefront
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: CHAOS_INJECTION_ENABLED
+          value: "true"
   # Replace the storefront's base strategy (setWeight 100 = instant) with a stepped, metric-gated Gateway-API
   # canary — the dev showcase of ADR-056. Demo-tuned pauses (30s) so a rollout steps through visibly. The
   # internal services keep the base auto-promote strategy (no user traffic to shift).
