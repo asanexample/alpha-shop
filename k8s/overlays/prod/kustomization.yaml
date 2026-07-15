@@ -33,11 +33,11 @@ patches:
         path: /spec/template/spec/containers/0/resources
         value:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 50m
+            memory: 64Mi
           limits:
-            cpu: 500m
-            memory: 256Mi
+            cpu: 200m
+            memory: 128Mi
   - target:
       group: argoproj.io
       version: v1alpha1
